@@ -10,26 +10,72 @@
 % Begin the paper here
 \begin{document}
 
+
 % Paper title
 % Can use linebreaks \\ within to get better formatting as desired
-\title{Bare Demo of IEEEtran.cls for Conferences}
+\title{Changeset Based Technical Dependencies}
 
 % Author names
-% use a multiple column layout for up to three different
-% affiliations
-\author{\IEEEauthorblockN{Michael Shell}
-\IEEEauthorblockA{School of Electrical and\\Computer Engineering\\
-Georgia Institute of Technology\\
-Atlanta, Georgia 30332--0250\\
-Email: http://www.michaelshell.org/contact.html}
+% Use a multiple column layout for up to three different affiliations
+\author{\IEEEauthorblockN{Jordan Ell}
+\IEEEauthorblockA{University of Victoria\\
+Victoria, British Columbia\\
+jell@uvic.ca}
 \and
-\IEEEauthorblockN{Homer Simpson}
+\IEEEauthorblockN{Triet Huynh}
 \IEEEauthorblockA{Twentieth Century Fox\\
-Springfield, USA\\
-Email: homer@thesimpsons.com}
+Vancouver, British Columbia\\
+infiro@uvic.ca}
 \and
-\IEEEauthorblockN{James Kirk\\ and Montgomery Scott}
-\IEEEauthorblockA{Starfleet Academy\\
-San Francisco, California 96678-2391\\
-Telephone: (800) 555--1212\\
-Fax: (888) 555--1212}}
+\IEEEauthorblockN{Braden Simpson}
+\IEEEauthorblockA{University of Victoria\\
+Victoria, British Columbia\\
+braden@uvic.ca}
+
+% make the title area
+\maketitle
+
+
+\begin{abstract}
+The abstract goes here.
+\end{abstract}
+
+
+\section{Introduction}
+This demo file is intended to serve as a ``starter file''
+for IEEE conference papers produced under \LaTeX\ using
+IEEEtran.cls version 1.7 and later.
+I wish you the best of success.
+
+\hfill mds
+ 
+\hfill January 11, 2007
+
+\subsection{Subsection Heading Here}
+Subsection text here.
+
+\subsubsection{Subsubsection Heading Here}
+Subsubsection text here.
+
+
+\section{Conclusion}
+The conclusion goes here.
+
+
+\section*{Acknowledgment}
+The authors would like to thank...
+
+
+\begin{thebibliography}{1}
+
+\bibitem{IEEEhowto:kopka}
+H.~Kopka and P.~W. Daly, \emph{A Guide to \LaTeX}, 3rd~ed.\hskip 1em plus
+  0.5em minus 0.4em\relax Harlow, England: Addison-Wesley, 1999.
+
+\end{thebibliography}
+
+
+
+
+% that's all folks
+\end{document}
