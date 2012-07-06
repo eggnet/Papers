@@ -59,4 +59,22 @@ M.~Cataldo, P.~A. Wagstrom, J.~D. Herbsleb, and K.~M. Carley, ``Identification
   [Online]. Available: \url{http://doi.acm.org/10.1145/1180875.1180929}
 \BIBentrySTDinterwordspacing
 
+\bibitem{Bodden:2003:HVJ}
+\BIBentryALTinterwordspacing
+E.~Bodden, ``A high-level view of java applications,'' in \emph{Companion of
+  the 18th annual ACM SIGPLAN conference on Object-oriented programming,
+  systems, languages, and applications}, ser. OOPSLA '03.\hskip 1em plus 0.5em
+  minus 0.4em\relax New York, NY, USA: ACM, 2003, pp. 384--385. [Online].
+  Available: \url{http://doi.acm.org/10.1145/949344.949447}
+\BIBentrySTDinterwordspacing
+
+\bibitem{Sliwerski:2005:CIF}
+\BIBentryALTinterwordspacing
+J.~\'{S}liwerski, T.~Zimmermann, and A.~Zeller, ``When do changes induce
+  fixes?'' in \emph{Proceedings of the 2005 international workshop on Mining
+  software repositories}, ser. MSR '05.\hskip 1em plus 0.5em minus 0.4em\relax
+  New York, NY, USA: ACM, 2005, pp. 1--5. [Online]. Available:
+  \url{http://doi.acm.org/10.1145/1082983.1083147}
+\BIBentrySTDinterwordspacing
+
 \end{thebibliography}
