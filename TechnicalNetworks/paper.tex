@@ -13,7 +13,7 @@
 
 % Paper title
 % Can use linebreaks \\ within to get better formatting as desired
-\title{Changeset Based Technical Dependencies}
+\title{Changeset Based Communication To Prevent Software Failures}
 
 % Author names
 % Use a multiple column layout for up to three different affiliations
@@ -25,7 +25,7 @@ jell@uvic.ca}
 \IEEEauthorblockN{Triet Huynh}
 \IEEEauthorblockA{University of Victoria\\
 Vancouver, British Columbia\\
-infiro@uvic.ca}
+triethuynhm@gmail.com}
 \and
 \IEEEauthorblockN{Braden Simpson}
 \IEEEauthorblockA{University of Victoria\\
@@ -39,16 +39,16 @@ braden@uvic.ca}}
 \begin{abstract}
 Software systems have not only become larger over time, but the amount of
 technical contributors and dependencies have also increased. With these expansions, also comes
-the increasing risk of introducing a software failure into a pre existing system.
+the increasing risk of introducing a software failure into a pre-existing system.
 Software failures are a multi billion dollar problem in the industry today and while integration and
 other forms of testing are helping to ensure a minimal number of failures, research to understand
 full impacts of changesets and their social implications is still a major concern. This paper describes
-how analysis of changesets and the social impacts they infer can be used to detect when failures 
-may occur and between what contributors the failures are being caused by. The result of this
-analysis comes in the form of a communication recommendation system. Based on previous
-changeset technical dependencies, their social implications and the build success or failure, 
-we will be able to recommend that a pair of contributors should communicate to avoid a potential
-software failure.
+how analysis of changesets and the social relationships they infer can be used to detect when failures 
+may occur and between what contributors the failures are induced. The result of this
+analysis comes in the form of a communication recommendation system to prevent possible software 
+failures. Based on previous changeset technical dependencies, their social implications and their 
+success or failure,  we will be able to recommend that a pair of contributors communicate
+to avoid a potential software failure.
 \end{abstract}
 
 
@@ -89,7 +89,8 @@ failures.
 
 \section{Data Collection}
 For this paper, we choose to study the Hibernate-ORG project which is an open source Java 
-application hosted on GitHub. The issue tracking for this project is preformed by Jira.
+application hosted on GitHub\footnote{https://github.com/}. 
+The issue tracking for this project is preformed by Jira\footnote{http://www.atlassian.com/software/jira/overview}.
 
 Our tool heavily relies on a project being source controlled by Git as we make use of many
 git features to be able to traverse and mine information from the repository. Our tool also
@@ -128,9 +129,13 @@ We now gather all contributors of the caller method inside the technical relatio
 edge between them and the author of the changeset, who is the contributor for the callee method.
 This creates a contributor network for a given changeset. To weight the edges, we use the formula:
 
-INSERT FORMULA HERE
+\begin{equation}\label{first}
+W = (\frac{\frac{\delta}{T_{1}}*\frac{O}{T_{2}}}{D})*100
+\end{equation}
 
-Explain the formula here.
+Here, $\frac{\delta}{T_{1}}$ is the percent of method changed by the callee and $\frac{O}{T_{2}}$ is the percent
+owned of the caller method. All of this is divided by the caller depth away from the callee (most cases
+1). 
 
 \subsection{Determining Changeset Success or Failure}
 In order to determine whether a previous commit was a success or failure (introduces a software
