@@ -1,4 +1,4 @@
-% This will be the main document for the Technical Networks paper to
+% This will be the main document for the Social Networks paper to
 % be written by the Eggnet team of Jordan Ell, Triet Huynh and Braden
 % Simpson in association with Adrian Schroeter and Daniela Damian.
 
@@ -13,7 +13,7 @@
 
 % Paper title
 % Can use linebreaks \\ within to get better formatting as desired
-\title{Linking Communication Artifacts to Changesets}
+\title{Changeset Based Communication to Prevent Software Failures}
 
 % Author names
 % Use a multiple column layout for up to three different affiliations
@@ -25,7 +25,7 @@ jell@uvic.ca}
 \IEEEauthorblockN{Triet Huynh}
 \IEEEauthorblockA{University of Victoria\\
 Vancouver, British Columbia\\
-infiro@uvic.ca}
+triethuynhm@gmail.com}
 \and
 \IEEEauthorblockN{Braden Simpson}
 \IEEEauthorblockA{University of Victoria\\
@@ -36,16 +36,17 @@ braden@uvic.ca}}
 \maketitle
 
 \begin{abstract}
-As software companies grow in size, and software systems being developed get more complex, an increasing need for 
+As software systems get more complex, the companies developing them consist of larger teams and therefore produce more complex communication artifacts.  To find out how to mitigate losses created by this growth and complexity, companies need to work harder to find out more efficient and effective ways to communicate.  This paper provides an analysis of communications artifacts, linked to commits by using multiple methods of textual analysis on the artifact, as well as the changeset.  These methods result in links that provide ways to analyze these communication artifacts and their participants to produce a historical representation in the form of patterns, which can be used to predict outcomes based on participants and communication.
 \end{abstract}
 
-
 \section{Introduction}
-This demo file is intended to serve as a ``starter file''
-for IEEE conference papers produced under \LaTeX\ using
-IEEEtran.cls version 1.7 and later.
-I wish you the best of success.
+As a company and product grows in both size and complexity, the difficulty of developing high quality products is greatly increased.  One tactic companies employ to ease this is by making use of more powerful and more efficient communication and organization systems such as (BugZilla, Jira[REF], etc.).  These systems provide bug reports and other communication artifacts, which are the core components implementing a software product during development.  The impact of these items on the project is massive, and any way to optimize the life-cycle of these communication artifacts is greatly desired.  When using these systems, there will emerge patterns of communication that can be observed, and actioned upon.  These patterns are useful for determining certain problematic groups of participants, or problem areas of a project that require more communication that another due to a more complex technical background, or steep learning curve.  However, finding these links is non-trivial, and has been approached in many different ways.
 
+Other researchers such as Bettenburg et al have done work to link these communication artifacts to source code\cite{Bettenburg:2008:ESI:1370750.1370757}.  As well Sliwerski et al have tried to link fixes(changesets) to their corresponding bug reports\cite{Sliwerski:2005:CIF:1083142.1083147}.  These links can assist us to understand the direct impact of the communication, and all the effected artifacts.    
+
+For analysis on bug reports and changesets to be relevant, first the fix-inducing changesets\cite{Sliwerski:2005:CIF:1083142.1083147} and their corresponding fixing changesets have to be determined.  This is used to determine whether or not the patterns of communication are 
+
+The next step is to construct networks of communication between participants of the communications artifacts for each changeset.  Then, based on these per-changeset networks, analyze the patterns created and determine basic measures of quality.  Some of these being based on these links, making  
 \hfill mds
  
 \hfill January 11, 2007
@@ -57,22 +58,22 @@ Subsection text here.
 Subsubsection text here.
 
 
-\section{Conclusion}
-The conclusion goes here.
+\section{Results}
+Describe our results.
+
+
+\section{Conclusion and Future Work}
+Describe our conclusion.
 
 
 \section*{Acknowledgment}
-The authors would like to thank...
+The authors would like to thank yo' mama.
 
 
-\begin{thebibliography}{1}
-
-\bibitem{IEEEhowto:kopka}
-H.~Kopka and P.~W. Daly, \emph{A Guide to \LaTeX}, 3rd~ed.\hskip 1em plus
-  0.5em minus 0.4em\relax Harlow, England: Addison-Wesley, 1999.
-
-\end{thebibliography}
+\bibliographystyle{IEEEtran}
+\bibliography{paper}
 
 
 % End of the paper
 \end{document}
+
