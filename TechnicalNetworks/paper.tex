@@ -32,54 +32,141 @@ infiro@uvic.ca}
 Victoria, British Columbia\\
 braden@uvic.ca}}
 
-% make the title area
+% Make the title area
 \maketitle
 
 
 \begin{abstract}
-Software systems have not only become larger themselves over time, but the amount of
+Software systems have not only become larger over time, but the amount of
 technical contributors and dependencies have also increased. With these expansions, also comes
-the increasing risk of introducing fault causing or fix inducing software into a pre existing system.
-This paper describes how evolving analysis of method caller and callee relationships can be
-accomplished to give network centric data of Java based applications. The result of these networks
-are method call graph relationships per changeset in a software configuration managements (SCM) 
-repository. These networks can be used to analyze the project impact of a changeset on a
-technical contributor level.
+the increasing risk of introducing a software failure into a pre existing system.
+Software failures are a multi billion dollar problem in the industry today and while integration and
+other forms of testing are helping to ensure a minimal number of failures, research to understand
+full impacts of changesets and their social implications is still a major concern. This paper describes
+how analysis of changesets and the social impacts they infer can be used to detect when failures 
+may occur and between what contributors the failures are being caused by. The result of this
+analysis comes in the form of a communication recommendation system. Based on previous
+changeset technical dependencies, their social implications and the build success or failure, 
+we will be able to recommend that a pair of contributors should communicate to avoid a potential
+software failure.
 \end{abstract}
 
 
 \section{Introduction}
-This demo file is intended to serve as a ``starter file''
-for IEEE conference papers produced under \LaTeX\ using
-IEEEtran.cls version 1.7 and later.
-I wish you the best of success.
+Often, object oriented programming (OOP) languages are used to create highly modular and 
+reusable code. The problem lies in that objects and their internal methods can be used in a wide
+variety of locations in either large or small projects. This causes small or large changes to any 
+given method inside the project to have a rippling effect across the rest of the project. These 
+effects can become a large influence of software failures throughout the project's life span.
 
-\hfill mds
- 
-\hfill January 11, 2007
+As projects evolve over time, they tend to become larger and more complex in nature and as
+a result the amount of technical dependencies will increase for a given module of code.
+Studies have shown that the more technical dependencies that a changed section of code has,
+the greater the number of software failures introduced will be \cite{Zimmermann:2008:PDU}. 
+This knowledge opens the door to many types of network analysis in regard to technical dependencies.
 
-\subsection{Subsection Heading Here}
-Subsection text here.
+Other researchers, such as Pinzger et al. \cite{Pinzger:2008:DNP} and Schroter et al.
+ \cite{Schroter:2010:PBO}, as well as Zimmermann\cite{Zimmermann:2008:PDU}, have also shown that
+social and communication networks can be used to predict a changeset's possibily of failure or
+success.
 
-\subsubsection{Subsubsection Heading Here}
-Subsubsection text here.
+Pinzger and Zimmermann use the idea of determining types of social connectivity through 
+software repository mining. They extract technical dependencies on the binary module level and
+determine what contributors have work on the module for a give changeset to create the social
+contributor networks. From these networks they are able to predict the success or failures of
+builds based on the notion of socio-technical congruence as described by Cataldo \cite{Cataldo:2006:ICR}.
+Schroter, on the other hand, uses issue or bug tracking systems to create a social network of
+contributors who communicate around such an item. Technical edges are then added to the
+nodes of contributors if both have edited the same file for a given build.
+
+We intend to use a similar approach of extracting social networks from technical dependencies, 
+except on the method or function level. From these dependencies we can extrapolate weighted
+social relationships between developers who are involved in the technical dependencies. Through
+pattern mining of these networks over a project's life span, we will be able to recommend future
+communication between contributors given a changeset in order to avoid potential software
+failures.
 
 
-\section{Conclusion}
-The conclusion goes here.
+\section{Data Collection}
+For this paper, we choose to study the Hibernate-ORG project which is an open source Java 
+application hosted on GitHub. The issue tracking for this project is preformed by Jira.
+
+Our tool heavily relies on a project being source controlled by Git as we make use of many
+git features to be able to traverse and mine information from the repository. Our tool also
+requires issue tracking software for the project to be able to mine for changeset success or
+failure status.
+
+
+\section{Methodology}
+In the following, we describe how we were able to predict potential software failures using changeset
+technical dependencies.
+
+\subsection{Extracting Technical Networks}
+To extract the technical dependencies of a project given a changeset, we construct a method
+call graph. Unlike  Bodden's \cite{Bodden:2003:HVJ} and other's approaches of using byte code
+and whole projects, we built our call graphs using source code, which does not have the assumptions
+of being able to compile or have access to all project files, using Eclipse's ASTParser. 
+With the use of source files, we are able
+to update the call graph as we traverse over the repository dynamically as opposed to rebuilding
+at every snapshot of the project. The resulting call graphs contains information regarding the control
+flow of methods inside of the project at every given changeset.
+
+We then use a tool similar to the Unix diff command to figure out what changes we made to any given
+file inside of the changeset in question. From here we can determine the methods, and weight
+of each method in terms of total characters , that have been changed.
+
+Combining the call graph and the given method changes of the changeset from the diff like command,
+we can determine what methods call those which have been changed. This creates a technical
+dependency between the two methods. We can also create a depth level of method calls to determine
+the technical dependencies between a daisy chain of method calls that end in the changed methods.
+
+\subsection{Extracting Contributor Networks}
+From the method caller to callee relationships, we can infer the contributor relationships by using
+the git blame command. From the blame, we can gather information regarding which contributor 
+wrote which lines of code inside a method results in their overall contribution to any given method.
+We now gather all contributors of the caller method inside the technical relationship and create an
+edge between them and the author of the changeset, who is the contributor for the callee method.
+This creates a contributor network for a given changeset. To weight the edges, we use the formula:
+
+INSERT FORMULA HERE
+
+Explain the formula here.
+
+\subsection{Determining Changeset Success or Failure}
+In order to determine whether a previous commit was a success or failure (introduces a software
+failure), we use the same approach as Sliwerski et al. \cite{Sliwerski:2005:CIF} in referencing the project's issue tracking
+database for additional information. However, changes were made in order to make their syntactic 
+and semantic analysis more project independent as their project was only used on specific Java projects. 
+
+Each commit from the project's repository will now be labelled as a success
+or failure and will be used for pattern mining in the prediction subsection below.
+
+\subsection{Predicting Success or Failure}
+Given a new changeset to a project, we are able to extract all the contributor networks as described
+above. After which, we look into the project's past to determine if any of the contributor edges have
+occurred before and whether or not that edge corresponded to a successful or failed changeset.
+
+If the pattern in question is found to be more associated with past failed changesets, we can predict that
+the current changeset will possibly fail and that to prevent this failure, the two contributors of the 
+pattern should communicate in the hopes of catching software failures earlier. If however, the pattern
+is found to be more associated with successful changesets, we can predict that the current changeset
+will be successful and not require a communication recommendation between contributors.
+
+
+\section{Results}
+Describe our results.
+
+
+\section{Conclusion and Future Work}
+Describe our conclusion.
 
 
 \section*{Acknowledgment}
-The authors would like to thank...
+The authors would like to thank yo' mama.
 
 
-\begin{thebibliography}{1}
-
-\bibitem{IEEEhowto:kopka}
-H.~Kopka and P.~W. Daly, \emph{A Guide to \LaTeX}, 3rd~ed.\hskip 1em plus
-  0.5em minus 0.4em\relax Harlow, England: Addison-Wesley, 1999.
-
-\end{thebibliography}
+\bibliographystyle{IEEEtran}
+\bibliography{paper}
 
 
 % End of the paper
