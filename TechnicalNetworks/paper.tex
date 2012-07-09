@@ -53,38 +53,44 @@ to avoid a potential software failure.
 
 
 \section{Introduction}
-Often, object oriented programming (OOP) languages are used to create highly modular and 
-reusable code. The problem lies in that objects and their internal methods can be used in a wide
-variety of locations in either large or small projects. This causes small or large changes to any 
-given method inside the project to have a rippling effect across the rest of the project. These 
-effects can become a large influence of software failures throughout the project's life span.
 
-As projects evolve over time, they tend to become larger and more complex in nature and as
-a result the amount of technical dependencies will increase for a given module of code.
-Studies have shown that the more technical dependencies that a changed section of code has,
-the greater the number of software failures introduced will be \cite{Zimmermann:2008:PDU}. 
-This knowledge opens the door to many types of network analysis in regard to technical dependencies.
+% Setup the problem.
+Often, large software projects are created using highly modular and 
+reusable code. The problem this creates, is that methods or functions can be used in a wide
+variety of locations throughout the project creating many technical dependencies. 
+This causes small or large changes to any given method inside the project to have a rippling 
+effect across the rest of the project\cite{Acharya:2011:PCI}. The larger these effects are,
+the more likely they are to cause a software failure inside the system during the project's
+life span\cite{Zimmermann:2008:PDU}. These observations open the door to many types
+of network analysis in regard to technical dependencies and preventing software failures.
 
-Other researchers, such as Pinzger et al. \cite{Pinzger:2008:DNP} and Schroter et al.
- \cite{Schroter:2010:PBO}, as well as Zimmermann\cite{Zimmermann:2008:PDU}, have also shown that
-social and communication networks can be used to predict a changeset's possibily of failure or
-success.
+% Explain technical network research that already exists
+Research has shown, that technical dependencies inside of a project can be used as a major
+tool for predicting the success or failure of changesets or builds \cite{Pinzger:2008:DNP}
+\cite{Zimmermann:2008:PDU}. However, most research in this area is based off of identifying
+central modules inside of a large code base which are likely to cause software failures and 
+predicting future failures based on this knowledge. This method also results in predictions 
+at the milestone build level of software development as opposed to a changeset level.
+Rather than just predict future failures, we would also like to offer a recommendation to 
+technical contributors based on these dependencies, which will help to prevent software failures
+or catch them earlier in development at the changeset level.
 
-Pinzger and Zimmermann use the idea of determining types of social connectivity through 
-software repository mining. They extract technical dependencies on the binary module level and
-determine what contributors have work on the module for a give changeset to create the social
-contributor networks. From these networks they are able to predict the success or failures of
-builds based on the notion of socio-technical congruence as described by Cataldo \cite{Cataldo:2006:ICR}.
-Schroter, on the other hand, uses issue or bug tracking systems to create a social network of
-contributors who communicate around such an item. Technical edges are then added to the
-nodes of contributors if both have edited the same file for a given build.
+% Introduce the idea of socio-technical congruence
+Network analysis for failure prevention is often also associated with socio-technical congruence
+inside of a project. Cataldo \cite{Cataldo:2006:ICR} showed that this congruence is a major factor in the time
+and success outcomes of a project. Schroter et al. \cite{Schroter:2010:PBO}
+has also shown that this congruence is a powerful tool for predicting the outcome of builds
+inside of a project. With this research, we now have a viable recommendation to make of completing
+the social side of this congruence. This gives rise to the question: "\textit{Can we support socio-technical
+congruence from a changeset's technical dependencies in order to predict software failures and
+provide social recommendations to prevent possible failures?}"
 
-We intend to use a similar approach of extracting social networks from technical dependencies, 
-except on the method or function level. From these dependencies we can extrapolate weighted
-social relationships between developers who are involved in the technical dependencies. Through
-pattern mining of these networks over a project's life span, we will be able to recommend future
-communication between contributors given a changeset in order to avoid potential software
-failures.
+% Explain our brief intended approach
+This paper explains our attempt to create a communication recommendation tool for technical
+contributors of a project on a changeset basis. We use technical dependencies to extrapolate
+contributor, or social, networks from which we can predict future software failures, as well as
+offer communication recommendations between contributors in order to catch potential
+failures. 
 
 
 \section{Data Collection}
@@ -165,9 +171,6 @@ Describe our results.
 \section{Conclusion and Future Work}
 Describe our conclusion.
 
-
-\section*{Acknowledgment}
-The authors would like to thank yo' mama.
 
 
 \bibliographystyle{IEEEtran}
