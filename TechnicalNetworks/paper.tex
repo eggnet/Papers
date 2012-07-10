@@ -4,6 +4,9 @@
 
 \documentclass[conference]{IEEEtran}
 
+% Use of outside images
+\usepackage{graphicx} 
+
 % Correct bad hyphenation here
 \hyphenation{op-tical net-works semi-conduc-tor}
 
@@ -13,7 +16,7 @@
 
 % Paper title
 % Can use linebreaks \\ within to get better formatting as desired
-\title{Software Failure Prediction With Contributor Technical Dependencies}
+\title{Software Failure Prediction With Changeset Technical Dependencies}
 
 % Author names
 % Use a multiple column layout for up to three different affiliations
@@ -25,7 +28,7 @@ jell@uvic.ca}
 \IEEEauthorblockN{Triet Huynh}
 \IEEEauthorblockA{University of Victoria\\
 Vancouver, British Columbia\\
-triethuynhm@gmail.com}
+infiro@uvic.ca}
 \and
 \IEEEauthorblockN{Braden Simpson}
 \IEEEauthorblockA{University of Victoria\\
@@ -44,11 +47,9 @@ Software failures are a multi-billion dollar problem in the industry today and w
 other forms of testing are helping to ensure a minimal number of failures, research to understand
 full impacts of changesets and their social implications is still a major concern. This paper describes
 how analysis of changesets and the technical relationships they infer can be used to detect when failures 
-may occur and between what contributors the failures are induced. The result of this
-analysis comes in the form of a communication recommendation system to prevent possible software 
-failures. Based on technical dependencies, their contributors, and their 
-success or failure in previous changesets,  we will be able to recommend a pair of contributors
-communicate to correct a potential software failure.
+may occur and between what contributors the failures are induced. The result of these predictions
+also provide a communication recommendation per changeset that supports the notion of
+socio-technical congruence which is know to increase changeset success.
 \end{abstract}
 
 
@@ -71,28 +72,26 @@ tool for predicting the success or failure of changesets or builds \cite{Pinzger
 central modules inside of a large code base which are likely to cause software failures and 
 predicting future failures based on this knowledge. This method also results in predictions 
 at the milestone build level of software development as opposed to a changeset level.
-Rather than only predict future failures, we would also like to offer a recommendation to 
-technical contributors based on these dependencies, which will help to prevent future software failures
-or catch them earlier in development at the changeset level.
+These research projects also lack the ability to provide recommendations based on their 
+knowledge that will help solve present or future software failures.
 
 % Introduce the idea of socio-technical congruence
-Network analysis for failure prevention is often also associated with the notion of a socio-technical 
-congruence inside of a project\cite{Conway:1968}. Schroter et al. \cite{Schroter:2010:PBO}
-has shown that this congruence is a powerful tool for predicting the outcome of builds
-inside of a project Kwan et al. \cite{Kwan:2011:SD} also shows, that if the build type was continuous 
-(changesets over time), an increased level of this congruence led to an increase in the build success 
-probability. With this research, we now have a viable recommendation to make, of completing
-the social side of this congruence. This gives rise to the question: "\textit{Can we support socio-technical 
-congruence from a changeset's technical dependencies in order to predict software failures and
-provide social recommendations to prevent these failures?}"
+Failure prevention is often also associated with the notion of a socio-technical 
+congruence inside of a project\cite{Conway:1968}. Kwan et al. \cite{Kwan:2011:SD} shows, 
+that if the build type is continuous (changesets over time), an increased level of this
+congruence led to an increase in the build success probability.
+
+% Research question
+With the power of technical dependencies in predicting software failures and the idea
+that socio-technical congruence can help changeset success we pose the question: 
+"\textit{Is it possible to predict software failures inside of changesets with technical
+dependencies and can we provide recommendations to help solve these failures?}"
 
 % Explain our brief intended approach
-This paper explains our attempt to create a failure predictions and communication recommendation 
-tool for technical contributors of a project on a changeset basis. We use technical dependencies 
-to extrapolate contributor, or social, networks from which we can predict future software failures 
-through pattern analysis. We also use this information to create communication recommendations
-that we hope will fill the social side of socio-technical congruence and help to prevent future
-software failures. 
+This paper explains our attempt to create a failure prediction system on a per changeset basis.
+Our process utilizes changesets and the call hierarchies effected  to find patterns of contributor 
+relationships in successful and failed changesets.  We can use these contributor relationships 
+to also promote the idea of socio-technical congruence with communications recommendations.
 
 
 \section{Data Collection}
@@ -151,6 +150,13 @@ is the percent owned of the caller method. All of this is divided by the caller 
 the callee (most cases 1).  Our technical networks are now created. We store all network data for
 previous commits inside the project.
 
+\begin{figure}[tb!]
+\centering
+\includegraphics[width=0.5\columnwidth]{images/network}
+\caption{A technical network. Contributor A has changed code which contributors B, C and D 
+are calling from their own code}
+\end{figure}
+
 \subsection{Predicting Success or Failure And Recommendations}
 Given a new changeset to a project, we are able to extract all the contributor networks as described
 above. After which, we look into the project's past networks to determine if any of the contributor edges have
@@ -173,7 +179,8 @@ Pair & Successful & Failed & Ratio\\
 \hline
 (Cody, Daisy)	&	0&	12&	1		\\
 (Adam, Daisy)	&	1&	14&	0.9697	\\
-(Bart, Eve)	&	2&	11&	0.9265
+(Bart, Eve)	&	2&	11&	0.9265      \\
+\hline
 \end{tabular}
 \end{center}
 \caption{\label{tab:ratio}}
