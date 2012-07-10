@@ -13,7 +13,7 @@
 
 % Paper title
 % Can use linebreaks \\ within to get better formatting as desired
-\title{Changeset Based Communication To Prevent Software Failures}
+\title{Software Failure Prediction With Contributor Technical Dependencies}
 
 % Author names
 % Use a multiple column layout for up to three different affiliations
@@ -38,17 +38,17 @@ braden@uvic.ca}}
 
 \begin{abstract}
 Software systems have not only become larger over time, but the amount of
-technical contributors and dependencies have also increased. With these expansions, also comes
+technical contributors and dependencies have also increased. With these expansions also comes
 the increasing risk of introducing a software failure into a pre-existing system.
-Software failures are a multi billion dollar problem in the industry today and while integration and
+Software failures are a multi-billion dollar problem in the industry today and while integration and
 other forms of testing are helping to ensure a minimal number of failures, research to understand
 full impacts of changesets and their social implications is still a major concern. This paper describes
-how analysis of changesets and the social relationships they infer can be used to detect when failures 
+how analysis of changesets and the technical relationships they infer can be used to detect when failures 
 may occur and between what contributors the failures are induced. The result of this
 analysis comes in the form of a communication recommendation system to prevent possible software 
-failures. Based on previous changeset technical dependencies, their social implications and their 
-success or failure,  we will be able to recommend that a pair of contributors communicate
-to avoid a potential software failure.
+failures. Based on technical dependencies, their contributors, and their 
+success or failure in previous changesets,  we will be able to recommend a pair of contributors
+communicate to correct a potential software failure.
 \end{abstract}
 
 
@@ -56,9 +56,9 @@ to avoid a potential software failure.
 
 % Setup the problem.
 Often, large software projects are created using highly modular and 
-reusable code. The problem this creates, is that methods or functions can be used in a wide
-variety of locations throughout the project creating many technical dependencies. 
-This causes small or large changes to any given method inside the project to have a rippling 
+reusable code. The problem this creates, is that methods or functions\footnote{This includes object constructors} 
+can be used in a wide variety of locations throughout the project creating many technical 
+dependencies.  This causes changes to any given method inside the project to have a rippling 
 effect across the rest of the project\cite{Acharya:2011:PCI}. The larger these effects are,
 the more likely they are to cause a software failure inside the system during the project's
 life span\cite{Zimmermann:2008:PDU}. These observations open the door to many types
@@ -71,105 +71,132 @@ tool for predicting the success or failure of changesets or builds \cite{Pinzger
 central modules inside of a large code base which are likely to cause software failures and 
 predicting future failures based on this knowledge. This method also results in predictions 
 at the milestone build level of software development as opposed to a changeset level.
-Rather than just predict future failures, we would also like to offer a recommendation to 
-technical contributors based on these dependencies, which will help to prevent software failures
+Rather than only predict future failures, we would also like to offer a recommendation to 
+technical contributors based on these dependencies, which will help to prevent future software failures
 or catch them earlier in development at the changeset level.
 
 % Introduce the idea of socio-technical congruence
-Network analysis for failure prevention is often also associated with socio-technical congruence
-inside of a project. Cataldo \cite{Cataldo:2006:ICR} showed that this congruence is a major factor in the time
-and success outcomes of a project. Schroter et al. \cite{Schroter:2010:PBO}
-has also shown that this congruence is a powerful tool for predicting the outcome of builds
-inside of a project. With this research, we now have a viable recommendation to make of completing
-the social side of this congruence. This gives rise to the question: "\textit{Can we support socio-technical
+Network analysis for failure prevention is often also associated with the notion of a socio-technical 
+congruence inside of a project\cite{Conway:1968}. Schroter et al. \cite{Schroter:2010:PBO}
+has shown that this congruence is a powerful tool for predicting the outcome of builds
+inside of a project Kwan et al. \cite{Kwan:2011:SD} also shows, that if the build type was continuous 
+(changesets over time), an increased level of this congruence led to an increase in the build success 
+probability. With this research, we now have a viable recommendation to make, of completing
+the social side of this congruence. This gives rise to the question: "\textit{Can we support socio-technical 
 congruence from a changeset's technical dependencies in order to predict software failures and
-provide social recommendations to prevent possible failures?}"
+provide social recommendations to prevent these failures?}"
 
 % Explain our brief intended approach
-This paper explains our attempt to create a communication recommendation tool for technical
-contributors of a project on a changeset basis. We use technical dependencies to extrapolate
-contributor, or social, networks from which we can predict future software failures, as well as
-offer communication recommendations between contributors in order to catch potential
-failures. 
+This paper explains our attempt to create a failure predictions and communication recommendation 
+tool for technical contributors of a project on a changeset basis. We use technical dependencies 
+to extrapolate contributor, or social, networks from which we can predict future software failures 
+through pattern analysis. We also use this information to create communication recommendations
+that we hope will fill the social side of socio-technical congruence and help to prevent future
+software failures. 
 
 
 \section{Data Collection}
-For this paper, we choose to study the Hibernate-ORG project which is an open source Java 
+For this paper, we choose to study the Hibernate-ORM project which is an open source Java 
 application hosted on GitHub\footnote{https://github.com/}. 
-The issue tracking for this project is preformed by Jira\footnote{http://www.atlassian.com/software/jira/overview}.
+The issue tracking for this project is performed by Jira\footnote{http://www.atlassian.com/software/jira/overview}.
 
-Our tool heavily relies on a project being source controlled by Git as we make use of many
-git features to be able to traverse and mine information from the repository. Our tool also
-requires issue tracking software for the project to be able to mine for changeset success or
+Our research heavily relies on the chosen project being source controlled by Git as we make use of many
+Git features to be able to traverse and mine information from the repository. Our research also
+requires issue/bug tracking software for the project to be able to mine for changeset success or
 failure status.
 
 
 \section{Methodology}
 In the following, we describe how we were able to predict potential software failures using changeset
-technical dependencies.
+technical dependencies and provide communication recommendations to avoid future failures.
+
+\subsection{Determining Changeset Success or Failure}
+In order to determine whether a previous commit was a success or failure (introduces a software
+failure), we use the same approach as Sliwerski et al. \cite{Sliwerski:2005:CIF} in referencing 
+the project's issue tracking database in association with its software repository for additional 
+information. However, changes were made in order to make their syntactic  and semantic analysis 
+more project independent as their project was only used on specific Java projects. 
+
+Each commit from the project's repository will now be labelled as a success
+or failure and will be used for pattern mining in the prediction process.
 
 \subsection{Extracting Technical Networks}
 To extract the technical dependencies of a project given a changeset, we construct a method
-call graph. Unlike  Bodden's \cite{Bodden:2003:HVJ} and other's approaches of using byte code
+call graph using Eclipse's ASTParser. 
+Unlike  Bodden's et al. \cite{Bodden:2003:HVJ} and other's approaches of using byte code
 and whole projects, we built our call graphs using source code, which does not have the assumptions
-of being able to compile or have access to all project files, using Eclipse's ASTParser. 
-With the use of source files, we are able
-to update the call graph as we traverse over the repository dynamically as opposed to rebuilding
-at every snapshot of the project. The resulting call graphs contains information regarding the control
-flow of methods inside of the project at every given changeset.
+of being able to compile or have access to all project files.
 
-We then use a tool similar to the Unix diff command to figure out what changes we made to any given
-file inside of the changeset in question. From here we can determine the methods, and weight
-of each method in terms of total characters , that have been changed.
+We then use a tool similar to the Unix \textit{diff} command to figure out what changes we made 
+to any given file inside of the changeset in question. From here, we determine the methods, 
+and weight of each method in terms of its total characters , that have been changed.
 
-Combining the call graph and the given method changes of the changeset from the diff like command,
-we can determine what methods call those which have been changed. This creates a technical
-dependency between the two methods. We can also create a depth level of method calls to determine
-the technical dependencies between a daisy chain of method calls that end in the changed methods.
+Combining the call graph and the given method changes of the changeset from the \textit{diff} like 
+command,  we can determine what methods call those which have been changed. This creates a 
+technical dependency between the two methods.
 
-\subsection{Extracting Contributor Networks}
-From the method caller to callee relationships, we can infer the contributor relationships by using
-the git blame command. From the blame, we can gather information regarding which contributor 
-wrote which lines of code inside a method results in their overall contribution to any given method.
-We now gather all contributors of the caller method inside the technical relationship and create an
-edge between them and the author of the changeset, who is the contributor for the callee method.
-This creates a contributor network for a given changeset. To weight the edges, we use the formula:
+From the method caller to callee relationships, we can infer the contributors by using
+the Git \textit{blame} command. From the \textit{blame}, we can gather information regarding which 
+contributor  wrote which lines of code inside a method. We then gather all contributors of the 
+caller method inside the technical relationship and create an edge between them and 
+the author of the changeset, who is the contributor for the 
+callee (changed) method. To weight the edges, we use the formula:
 
 \begin{equation}\label{first}
 W = (\frac{\frac{\delta}{T_{1}}*\frac{O}{T_{2}}}{D})*100
 \end{equation}
 
-Here, $\frac{\delta}{T_{1}}$ is the percent of method changed by the callee and $\frac{O}{T_{2}}$ is the percent
-owned of the caller method. All of this is divided by the caller depth away from the callee (most cases
-1). 
+Here, $\frac{\delta}{T_{1}}$ is the percent of method changed by the callee and $\frac{O}{T_{2}}$ 
+is the percent owned of the caller method. All of this is divided by the caller depth away from 
+the callee (most cases 1).  Our technical networks are now created. We store all network data for
+previous commits inside the project.
 
-\subsection{Determining Changeset Success or Failure}
-In order to determine whether a previous commit was a success or failure (introduces a software
-failure), we use the same approach as Sliwerski et al. \cite{Sliwerski:2005:CIF} in referencing the project's issue tracking
-database for additional information. However, changes were made in order to make their syntactic 
-and semantic analysis more project independent as their project was only used on specific Java projects. 
-
-Each commit from the project's repository will now be labelled as a success
-or failure and will be used for pattern mining in the prediction subsection below.
-
-\subsection{Predicting Success or Failure}
+\subsection{Predicting Success or Failure And Recommendations}
 Given a new changeset to a project, we are able to extract all the contributor networks as described
-above. After which, we look into the project's past to determine if any of the contributor edges have
-occurred before and whether or not that edge corresponded to a successful or failed changeset.
+above. After which, we look into the project's past networks to determine if any of the contributor edges have
+occurred before and whether or not that edge has a  corresponded to more successful or failed changeset. 
 
-If the pattern in question is found to be more associated with past failed changesets, we can predict that
-the current changeset will possibly fail and that to prevent this failure, the two contributors of the 
-pattern should communicate in the hopes of catching software failures earlier. If however, the pattern
-is found to be more associated with successful changesets, we can predict that the current changeset
-will be successful and not require a communication recommendation between contributors.
-
+We can now base our prediction of whether a changeset will fail based on this data and we can recommend
+high failure rate pairs of contributors communicate during a predicted failed changeset to support the notion
+of socio-technical congruence.
 
 \section{Results}
-Describe our results.
+We found a total of X contributor pairs existed over the entire project, of which Y were found to cause
+failures inside of the system. We rank failures by the ratio of successful to failed changesets in which 
+they were found (Table\ref{tab:ratio}).
+
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{@{\hspace{.2cm}}ccc@{\hspace{.75cm}}c@{\hspace{.2cm}}}
+\hline
+Pair & Successful & Failed & Ratio\\
+\hline
+(Cody, Daisy)	&	0&	12&	1		\\
+(Adam, Daisy)	&	1&	14&	0.9697	\\
+(Bart, Eve)	&	2&	11&	0.9265
+\end{tabular}
+\end{center}
+\caption{\label{tab:ratio}}
+\end{table}
+
+Using this data, we were able to accurately predict W out of Z failures from a sample size of T given
+changesets inside our test project. From these predicted failures we were able to give an average of
+H recommendations for contributor communication on average.
 
 
 \section{Conclusion and Future Work}
-Describe our conclusion.
+It has been shown that technical dependencies are often used as a tool to predict software failures
+in large software system\cite{Pinzger:2008:DNP}\cite{Zimmermann:2008:PDU}. 
+With this study, we have found evidence that not only can we predict these
+failures from technical dependencies themselves, but predict failures based on contributor
+dependencies found in changesets over a project's life span. Through the contributor dependencies,
+we can also give communication recommendations to contributors that complete the notion of
+socio-technical congruence which is also known to increase the probability of changeset success.
+
+Into the future, we will attempt to bring the socio-technical congruence into the foreground of 
+our research with the use of actual communication networks on a per commit basis as well. We plan
+to investigate the congruence of these social and technical networks and whether or not they 
+have an affect on success or failure of builds.
 
 
 
