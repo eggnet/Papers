@@ -26,14 +26,6 @@ Adrian Schr{\"o}ter and
 Daniela Damian}
 \IEEEauthorblockA{University of Victoria,
 Victoria, British Columbia\\\{jell, infiro, braden\}@uvic.ca, schadr@acm.org, danielad@cs.uvic.ca}
-%\IEEEauthorblockA{\IEEEauthorrefmark{2}University of Victoria\\
-%Victoria, British Columbia\\ infiro@uvic.ca}
-%\IEEEauthorblockA{\IEEEauthorrefmark{3}University of Victoria\\
-%Victoria, British Columbia\\ braden@uvic.ca}
-%\IEEEauthorblockA{\IEEEauthorrefmark{4}University of Victoria\\
-%Victoria, British Columbia\\ schadr@uvic.ca}
-%\IEEEauthorblockA{\IEEEauthorrefmark{5}University of Victoria\\
-%Victoria, British Columbia\\ danielad@cs.uvic.ca}}
 }
 
 % Make the title area
@@ -48,9 +40,9 @@ Software failures are a multi-billion dollar problem in the industry today and w
 other forms of testing are helping to ensure a minimal number of failures, research to understand
 full impacts of changesets and their social implications is still a major concern. This paper describes
 how analysis of changesets and the technical relationships they infer can be used to detect harmful
-structures between contributors which may induce software failures. The result of these predictions
-also provide a communication recommendation per changeset that supports the notion of
-socio-technical congruence which is know to increase changeset success.
+structures between contributors which may induce software failures. These harmful structures may
+also be used to predict future software failures as well as provide recommendations to contributors
+to solve these failures inside of changesets.
 \end{abstract}
 
 
@@ -83,7 +75,7 @@ congruence led to an increase in the build success probability.
 
 % Research question
 With the power of technical dependencies in predicting software failures and the idea
-that socio-technical congruence can help changeset success we pose the question: 
+that socio-technical congruence can determine changeset success, we pose the question: 
 "\textit{Is it possible to locate harmful dependency structures among contributors inside
 of changesets with technical dependencies and can we predict future changeset failures
 while providing recommendations to solve these failures.?}"
@@ -98,42 +90,44 @@ to also promote the idea of socio-technical congruence with communications recom
 
 \section{Methodology}
 
-\subsection{Determining Changeset Success or Failure}
-In order to determine whether a previous commit was a success or failure (introduces a software
+\subsection{Extracting Technical Networks}
+In order to determine whether a changeset was a success or failure (introduces a software
 failure), we use the approach of Sliwerski et al.~\cite{Sliwerski:2005:CIF}.
 
-\subsection{Extracting Technical Networks}
-To extract the technical dependencies of a project given a changeset, we first construct a method
+To extract the technical dependencies of a given changeset, we first construct a method
 call graph using Eclipse's ASTParser. 
 Unlike  Bodden's et al.~\cite{Bodden:2003:HVJ} and other's approaches of using byte code
-and whole projects, we built our call graphs using source code, which does not have the assumptions
+and whole projects, we built call graphs using source code, which does not have the assumptions
 of being able to compile or have access to all project files.
 
 We then use the Git software repository to determine what changes were made to any given
 file inside of the changeset. Specifically, we look for modified methods inside of the changeset
-files and note them as changed.
+files.
 
 After discovering which methods have been changed, we can use the call graph to determine
 which methods call those that have been changed. This creates a technical dependency between
-the caller and callee (changed) method. From this dependency, we can add contributors (owners) 
+the callers and the callee’s (changed) method. From this dependency, we can add contributors (owners) 
 of the methods.
 
 We extrapolate the owners of each method in the dependencies from the Git repository 
 (Git stores contributor per line number for each file).  We now have our technical dependency 
-network based on method call hierarchy with contributors. We can simplify the network by 
-only using the connection between contributors since we are only interested in discovering the 
-problematic edges between contributors and not the methods themselves.
+network based on method call hierarchy with contributors (Figure~\ref{fig:network} left hand side).
+We simplify the network by only using the connection between contributors since we 
+are only interested in discovering the problematic edges between contributors and not the 
+methods themselves (Figure~\ref{fig:network} right hand side). This is our final technical 
+network.
 
-\begin{figure}[tb!]
+% Technical network figure
+\begin{figure*}[tb!]
 \centering
-\includegraphics[width=0.5\columnwidth]{images/TecNetwork}
-\caption{A technical network. Cody has changed code which Eve, Daisy and Bart
-are calling from their own code.\label{fig:network}}
-\end{figure}
+\includegraphics[width=0.9\textwidth, scale=0.5]{images/TecNetwork}
+\caption{A technical network for a changeset. Cody has changed method getX() which is being
+called by Bart's method foo() as well as Daisy and Adam's method bar().\label{fig:network}}
+\end{figure*}
 
 \subsection{Identifying Harmful Structures}
 To identify harmful structures (edges) inside of our technical networks, we analyze these 
-edges in relation to build failure. We proceed in the following steps:
+edges in relation to changeset failure. We proceed in the following steps:
 
 \begin{enumerate}
 \item Identify all possible edges from the technical networks.
@@ -153,13 +147,13 @@ project is performed by Jira\footnote{http://www.atlassian.com/software/jira/ove
 
 We chose this project because it utilizes Java for all internal structures and control flow which
 is ideal for creating large method call graphs. This project is also source controlled with Git
-which allows the use of Git's provided tools for traversing the repository and mining
+which allows the use of Git's internal tools for traversing the repository and mining
 information. Finally, Hibernate-ORM uses issue tracking software which can easily be mined
 using a provided API which is ideal for determining changeset success or failure.
 
 In Hibernate-ORM, we found a total of X contributor pairs existed over the entire project, 
-of which Y were found to be harmful inside of the system. We rank the pairings by their 
-respective p-values(Table~\ref{tab:ratio}).
+of which Y were found to be harmful inside of the system (A p-value of F or higher). 
+We rank the pairings by their respective p-values(Table~\ref{tab:ratio}).
 
 \begin{table}[h]
 \begin{center}
@@ -177,10 +171,10 @@ Pair & Successful & Failed & P-Value\\
 \end{table}
 
 By recognizing known harmful pairings in new changeset networks, we can also predict that the
-given changeset will fail. We were able to accurately predict W out of Z failures from a sample 
-size of T given changesets inside of Hibernate-ORM. Given the known harmful pairing, we can 
-also recommend communication between the two contributors to support the notion of
-socio-technical congruence.
+given changeset will fail based on that pairings p-value. We were able to accurately predict 
+W out of Z failures from a sample size of T given changesets inside of Hibernate-ORM. Given 
+the known harmful pairing, we can also recommend communication between the two 
+contributors to support the notion of socio-technical congruence.
 
 
 \section{Conclusion and Future Work}
