@@ -85,8 +85,8 @@ congruence led to an increase in the build success probability.
 With the power of technical dependencies in predicting software failures and the idea
 that socio-technical congruence can help changeset success we pose the question: 
 "\textit{Is it possible to locate harmful dependency structures among contributors inside
-of changesets with technical dependencies and can we provide recommendations to help
-solve issues these structures create?}"
+of changesets with technical dependencies and can we predict future changeset failures
+while providing recommendations to solve these failures.?}"
 
 % Explain our brief intended approach
 This paper explains our attempt to create a failure prediction system on a per changeset basis using
@@ -103,51 +103,48 @@ In order to determine whether a previous commit was a success or failure (introd
 failure), we use the approach of Sliwerski et al.~\cite{Sliwerski:2005:CIF}.
 
 \subsection{Extracting Technical Networks}
-To extract the technical dependencies of a project given a changeset, we construct a method
+To extract the technical dependencies of a project given a changeset, we first construct a method
 call graph using Eclipse's ASTParser. 
 Unlike  Bodden's et al.~\cite{Bodden:2003:HVJ} and other's approaches of using byte code
 and whole projects, we built our call graphs using source code, which does not have the assumptions
 of being able to compile or have access to all project files.
 
-We then use a tool similar to the Unix \textit{diff} command to figure out what changes we made 
-to any given file inside of the changeset in question. From here, we determine the methods, 
-and weight of each method in terms of its total characters , that have been changed.
+We then use the Git software repository to determine what changes were made to any given
+file inside of the changeset. Specifically, we look for modified methods inside of the changeset
+files and note them as changed.
 
-Combining the call graph and the given method changes of the changeset from the \textit{diff} like 
-command,  we can determine what methods call those which have been changed. This creates a 
-technical dependency between the two methods.
+After discovering which methods have been changed, we can use the call graph to determine
+which methods call those that have been changed. This creates a technical dependency between
+the caller and callee (changed) method. From this dependency, we can add contributors (owners) 
+of the methods.
 
-From the method caller to callee relationships, we can infer the contributors by using
-the Git \textit{blame} command. From the \textit{blame}, we can gather information regarding which 
-contributor  wrote which lines of code inside a method. We then gather all contributors of the 
-caller method inside the technical relationship and create an edge between them and 
-the author of the changeset, who is the contributor for the 
-callee (changed) method. To weight the edges, we use the formula:
-
-\begin{equation}\label{first}
-W = (\frac{\frac{\delta}{T_{1}}*\frac{O}{T_{2}}}{D})*100
-\end{equation}
-
-Here, $\frac{\delta}{T_{1}}$ is the percent of method changed by the callee and $\frac{O}{T_{2}}$ 
-is the percent owned of the caller method. All of this is divided by the caller depth away from 
-the callee (most cases 1).  Our technical networks are now created. We store all network data for
-previous commits inside the project.
+We extrapolate the owners of each method in the dependencies from the Git repository 
+(Git stores contributor per line number for each file).  We now have our technical dependency 
+network based on method call hierarchy with contributors. We can simplify the network by 
+only using the connection between contributors since we are only interested in discovering the 
+problematic edges between contributors and not the methods themselves.
 
 \begin{figure}[tb!]
 \centering
-\includegraphics[width=0.5\columnwidth]{images/network}
-\caption{A technical network. Contributor A has changed code which contributors B, C and D 
-are calling from their own code}
+\includegraphics[width=0.5\columnwidth]{images/TecNetwork}
+\caption{A technical network. Cody has changed code which Eve, Daisy and Bart
+are calling from their own code.\label{fig:network}}
 \end{figure}
 
-\subsection{Predicting Success or Failure And Recommendations}
-Given a new changeset to a project, we are able to extract all the contributor networks as described
-above. After which, we look into the project's past networks to determine if any of the contributor edges have
-occurred before and whether or not that edge has a  corresponded to more successful or failed changeset. 
+\subsection{Identifying Harmful Structures}
+To identify harmful structures (edges) inside of our technical networks, we analyze these 
+edges in relation to build failure. We proceed in the following steps:
 
-We can now base our prediction of whether a changeset will fail based on this data and we can recommend
-high failure rate pairs of contributors communicate during a predicted failed changeset to support the notion
-of socio-technical congruence.
+\begin{enumerate}
+\item Identify all possible edges from the technical networks.
+\item For each edge, count occurrences in technical networks of failed changesets.
+\item For each edge, count occurrences in technical networks of successful changesets.
+\item Determine if the edge is related to success or failure.
+\end{enumerate}
+
+To determine an edge's relation to success or failure we use a Fischer Exact Value test
+who's p-value is stored in our results table (Table~\ref{tab:ratio}). Pairs with the highest
+p-values are said to be harmful structures inside of a project.
 
 \section{Results}
 For this paper, we choose to study the Hibernate-ORM project which is an open source Java 
@@ -161,14 +158,14 @@ information. Finally, Hibernate-ORM uses issue tracking software which can easil
 using a provided API which is ideal for determining changeset success or failure.
 
 In Hibernate-ORM, we found a total of X contributor pairs existed over the entire project, 
-of which Y were found to cause failures inside of the system. We rank failures by the ratio 
-of successful to failed changesets in which they were found (Table\ref{tab:ratio}).
+of which Y were found to be harmful inside of the system. We rank the pairings by their 
+respective p-values(Table~\ref{tab:ratio}).
 
 \begin{table}[h]
 \begin{center}
 \begin{tabular}{@{\hspace{.2cm}}ccc@{\hspace{.75cm}}c@{\hspace{.2cm}}}
 \hline
-Pair & Successful & Failed & Ratio\\
+Pair & Successful & Failed & P-Value\\
 \hline
 (Cody, Daisy)	&	0&	12&	1		\\
 (Adam, Daisy)	&	1&	14&	0.9697	\\
@@ -179,9 +176,11 @@ Pair & Successful & Failed & Ratio\\
 \caption{The top 3 harmful contributor pairs found and ordered by failure ratio.\label{tab:ratio}}
 \end{table}
 
-Using this data, we were able to accurately predict W out of Z failures from a sample size of T given
-changesets inside our test project. From these predicted failures we were able to give an average of
-H recommendations for contributor communication on average.
+By recognizing known harmful pairings in new changeset networks, we can also predict that the
+given changeset will fail. We were able to accurately predict W out of Z failures from a sample 
+size of T given changesets inside of Hibernate-ORM. Given the known harmful pairing, we can 
+also recommend communication between the two contributors to support the notion of
+socio-technical congruence.
 
 
 \section{Conclusion and Future Work}
