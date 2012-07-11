@@ -96,17 +96,6 @@ relationships in successful and failed changesets.  We can use these contributor
 to also promote the idea of socio-technical congruence with communications recommendations.
 
 
-\section{Data Collection}
-For this paper, we choose to study the Hibernate-ORM project which is an open source Java 
-application hosted on GitHub\footnote{https://github.com/}. 
-The issue tracking for this project is performed by Jira\footnote{http://www.atlassian.com/software/jira/overview}.
-
-Our research heavily relies on the chosen project being source controlled by Git as we make use of many
-Git features to be able to traverse and mine information from the repository. Our research also
-requires issue/bug tracking software for the project to be able to mine for changeset success or
-failure status.
-
-
 \section{Methodology}
 
 \subsection{Determining Changeset Success or Failure}
@@ -161,9 +150,19 @@ high failure rate pairs of contributors communicate during a predicted failed ch
 of socio-technical congruence.
 
 \section{Results}
-We found a total of X contributor pairs existed over the entire project, of which Y were found to cause
-failures inside of the system. We rank failures by the ratio of successful to failed changesets in which 
-they were found (Table\ref{tab:ratio}).
+For this paper, we choose to study the Hibernate-ORM project which is an open source Java 
+application hosted on GitHub\footnote{https://github.com/}. The issue tracking for this 
+project is performed by Jira\footnote{http://www.atlassian.com/software/jira/overview}.
+
+We chose this project because it utilizes Java for all internal structures and control flow which
+is ideal for creating large method call graphs. This project is also source controlled with Git
+which allows the use of Git's provided tools for traversing the repository and mining
+information. Finally, Hibernate-ORM uses issue tracking software which can easily be mined
+using a provided API which is ideal for determining changeset success or failure.
+
+In Hibernate-ORM, we found a total of X contributor pairs existed over the entire project, 
+of which Y were found to cause failures inside of the system. We rank failures by the ratio 
+of successful to failed changesets in which they were found (Table\ref{tab:ratio}).
 
 \begin{table}[h]
 \begin{center}
