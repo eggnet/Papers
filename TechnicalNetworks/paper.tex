@@ -16,24 +16,25 @@
 
 % Paper title
 % Can use linebreaks \\ within to get better formatting as desired
-\title{Software Failure Prediction With Changeset Technical Dependencies}
+\title{Finding Harmful Structures Among Developer Networks}
 
-% Author names
-% Use a multiple column layout for up to three different affiliations
-\author{\IEEEauthorblockN{Jordan Ell}
-\IEEEauthorblockA{University of Victoria\\
-Victoria, British Columbia\\
-jell@uvic.ca}
-\and
-\IEEEauthorblockN{Triet Huynh}
-\IEEEauthorblockA{University of Victoria\\
-Vancouver, British Columbia\\
-infiro@uvic.ca}
-\and
-\IEEEauthorblockN{Braden Simpson}
-\IEEEauthorblockA{University of Victoria\\
-Victoria, British Columbia\\
-braden@uvic.ca}}
+% Authors names
+\author{\IEEEauthorblockN{Jordan Ell,
+Triet Huynh,
+Braden Simpson, 
+Adrian Schr{\"o}ter and
+Daniela Damian}
+\IEEEauthorblockA{University of Victoria,
+Victoria, British Columbia\\\{jell, infiro, braden\}@uvic.ca, schadr@acm.org, danielad@cs.uvic.ca}
+%\IEEEauthorblockA{\IEEEauthorrefmark{2}University of Victoria\\
+%Victoria, British Columbia\\ infiro@uvic.ca}
+%\IEEEauthorblockA{\IEEEauthorrefmark{3}University of Victoria\\
+%Victoria, British Columbia\\ braden@uvic.ca}
+%\IEEEauthorblockA{\IEEEauthorrefmark{4}University of Victoria\\
+%Victoria, British Columbia\\ schadr@uvic.ca}
+%\IEEEauthorblockA{\IEEEauthorrefmark{5}University of Victoria\\
+%Victoria, British Columbia\\ danielad@cs.uvic.ca}}
+}
 
 % Make the title area
 \maketitle
@@ -46,8 +47,8 @@ the increasing risk of introducing a software failure into a pre-existing system
 Software failures are a multi-billion dollar problem in the industry today and while integration and
 other forms of testing are helping to ensure a minimal number of failures, research to understand
 full impacts of changesets and their social implications is still a major concern. This paper describes
-how analysis of changesets and the technical relationships they infer can be used to detect when failures 
-may occur and between what contributors the failures are induced. The result of these predictions
+how analysis of changesets and the technical relationships they infer can be used to detect harmful
+structures between contributors which may induce software failures. The result of these predictions
 also provide a communication recommendation per changeset that supports the notion of
 socio-technical congruence which is know to increase changeset success.
 \end{abstract}
@@ -56,39 +57,40 @@ socio-technical congruence which is know to increase changeset success.
 \section{Introduction}
 
 % Setup the problem.
-Often, large software projects are created using highly modular and 
+Large software projects are created using highly modular and 
 reusable code. The problem this creates, is that methods or functions\footnote{This includes object constructors} 
 can be used in a wide variety of locations throughout the project creating many technical 
 dependencies.  This causes changes to any given method inside the project to have a rippling 
-effect across the rest of the project\cite{Acharya:2011:PCI}. The larger these effects are,
+effect across the rest of the project~\cite{Acharya:2011:PCI}. The larger these effects are,
 the more likely they are to cause a software failure inside the system during the project's
-life span\cite{Zimmermann:2008:PDU}. These observations open the door to many types
+life span~\cite{Zimmermann:2008:PDU}. These observations open the door to many types
 of network analysis in regard to technical dependencies and preventing software failures.
 
 % Explain technical network research that already exists
-Research has shown, that technical dependencies inside of a project can be used as a major
-tool for predicting the success or failure of changesets or builds \cite{Pinzger:2008:DNP}
-\cite{Zimmermann:2008:PDU}. However, most research in this area is based off of identifying
+Technical dependencies inside a project can be used to predict success or failure of 
+changesets or builds~\cite{Pinzger:2008:DNP, Zimmermann:2008:PDU}. However, most 
+research in this area is based off of identifying
 central modules inside of a large code base which are likely to cause software failures and 
 predicting future failures based on this knowledge. This method also results in predictions 
 at the milestone build level of software development as opposed to a changeset level.
-These research projects also lack the ability to provide recommendations based on their 
-knowledge that will help solve present or future software failures.
+These research projects also lack the ability to provide recommendations.
 
 % Introduce the idea of socio-technical congruence
-Failure prevention is often also associated with the notion of a socio-technical 
-congruence inside of a project\cite{Conway:1968}. Kwan et al. \cite{Kwan:2011:SD} shows, 
+Changeset failures are often also associated with the notion of a socio-technical 
+congruence inside of a project~\cite{Conway:1968}. Kwan et al.~\cite{Kwan:2011:SD} shows, 
 that if the build type is continuous (changesets over time), an increased level of this
 congruence led to an increase in the build success probability.
 
 % Research question
 With the power of technical dependencies in predicting software failures and the idea
 that socio-technical congruence can help changeset success we pose the question: 
-"\textit{Is it possible to predict software failures inside of changesets with technical
-dependencies and can we provide recommendations to help solve these failures?}"
+"\textit{Is it possible to locate harmful dependency structures among contributors inside
+of changesets with technical dependencies and can we provide recommendations to help
+solve issues these structures create?}"
 
 % Explain our brief intended approach
-This paper explains our attempt to create a failure prediction system on a per changeset basis.
+This paper explains our attempt to create a failure prediction system on a per changeset basis using
+the detection of harmful structures among developer networks.
 Our process utilizes changesets and the call hierarchies effected  to find patterns of contributor 
 relationships in successful and failed changesets.  We can use these contributor relationships 
 to also promote the idea of socio-technical congruence with communications recommendations.
@@ -106,23 +108,15 @@ failure status.
 
 
 \section{Methodology}
-In the following, we describe how we were able to predict potential software failures using changeset
-technical dependencies and provide communication recommendations to avoid future failures.
 
 \subsection{Determining Changeset Success or Failure}
 In order to determine whether a previous commit was a success or failure (introduces a software
-failure), we use the same approach as Sliwerski et al. \cite{Sliwerski:2005:CIF} in referencing 
-the project's issue tracking database in association with its software repository for additional 
-information. However, changes were made in order to make their syntactic  and semantic analysis 
-more project independent as their project was only used on specific Java projects. 
-
-Each commit from the project's repository will now be labelled as a success
-or failure and will be used for pattern mining in the prediction process.
+failure), we use the approach of Sliwerski et al.~\cite{Sliwerski:2005:CIF}.
 
 \subsection{Extracting Technical Networks}
 To extract the technical dependencies of a project given a changeset, we construct a method
 call graph using Eclipse's ASTParser. 
-Unlike  Bodden's et al. \cite{Bodden:2003:HVJ} and other's approaches of using byte code
+Unlike  Bodden's et al.~\cite{Bodden:2003:HVJ} and other's approaches of using byte code
 and whole projects, we built our call graphs using source code, which does not have the assumptions
 of being able to compile or have access to all project files.
 
@@ -183,7 +177,7 @@ Pair & Successful & Failed & Ratio\\
 \hline
 \end{tabular}
 \end{center}
-\caption{\label{tab:ratio}}
+\caption{The top 3 harmful contributor pairs found and ordered by failure ratio.\label{tab:ratio}}
 \end{table}
 
 Using this data, we were able to accurately predict W out of Z failures from a sample size of T given
@@ -192,18 +186,16 @@ H recommendations for contributor communication on average.
 
 
 \section{Conclusion and Future Work}
-It has been shown that technical dependencies are often used as a tool to predict software failures
-in large software system\cite{Pinzger:2008:DNP}\cite{Zimmermann:2008:PDU}. 
-With this study, we have found evidence that not only can we predict these
-failures from technical dependencies themselves, but predict failures based on contributor
-dependencies found in changesets over a project's life span. Through the contributor dependencies,
-we can also give communication recommendations to contributors that complete the notion of
-socio-technical congruence which is also known to increase the probability of changeset success.
+Technical dependencies are often used to predict software failures
+in large software system~\cite{Pinzger:2008:DNP, Zimmermann:2008:PDU}. 
+We have found evidence that technical dependencies predict failures based on contributor
+dependencies found in changesets. Through the contributor dependencies,
+we can also give recommendations to contributors about whom to contact to
+resolve potential issues.
 
-Into the future, we will attempt to bring the socio-technical congruence into the foreground of 
-our research with the use of actual communication networks on a per commit basis as well. We plan
-to investigate the congruence of these social and technical networks and whether or not they 
-have an affect on success or failure of builds.
+In future work, we will add communication networks on a per commit basis as well. We plan
+to investigate the congruence of these social and technical networks and its effects on 
+software quality.
 
 
 
