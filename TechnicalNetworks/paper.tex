@@ -22,7 +22,7 @@
 \author{\IEEEauthorblockN{Jordan Ell,
 Triet Huynh,
 Braden Simpson, 
-Adrian Schr{\"o}ter and
+Adrian Schr{\"o}ter,
 Daniela Damian}
 \IEEEauthorblockA{University of Victoria,
 Victoria, British Columbia\\\{jell, infiro, braden\}@uvic.ca, schadr@acm.org, danielad@cs.uvic.ca}
@@ -50,9 +50,9 @@ to solve these failures inside of changesets.
 
 % Setup the problem.
 Large software projects are created using highly modular and 
-reusable code. The problem this creates, is that methods or functions\footnote{This includes object constructors} 
-can be used in a wide variety of locations throughout the project creating many technical 
-dependencies.  This causes changes to any given method inside the project to have a rippling 
+reusable code. The problem this creates, is that methods or functions
+can be used in a wide variety of locations throughout the project creating technical 
+dependencies.  This causes changes to any given method to have a rippling 
 effect across the rest of the project~\cite{Acharya:2011:PCI}. The larger these effects are,
 the more likely they are to cause a software failure inside the system during the project's
 life span~\cite{Zimmermann:2008:PDU}. These observations open the door to many types
@@ -62,72 +62,82 @@ of network analysis in regard to technical dependencies and preventing software 
 Technical dependencies inside a project can be used to predict success or failure of 
 changesets or builds~\cite{Pinzger:2008:DNP, Zimmermann:2008:PDU}. However, most 
 research in this area is based off of identifying
-central modules inside of a large code base which are likely to cause software failures and 
-predicting future failures based on this knowledge. This method also results in predictions 
-at the milestone build level of software development as opposed to a changeset level.
-These research projects also lack the ability to provide recommendations.
-
-% Introduce the idea of socio-technical congruence
-Changeset failures are often also associated with the notion of a socio-technical 
-congruence inside of a project~\cite{Conway:1968}. Kwan et al.~\cite{Kwan:2011:SD} shows, 
-that if the build type is continuous (changesets over time), an increased level of this
-congruence led to an increase in the build success probability. 
+central modules inside a large code base which are likely to cause software failures or
+detecting frequently changed code that can be associated with with previous failures
+~\cite{Kim:2006:AIB}. 
+This method also results in predictions 
+at the file or binary level of software development as opposed to a changeset level
+and often lack the ability to provide recommendations other than test focus.
 
 % Research question
-With the power of technical dependencies in predicting software failures and the idea
-that socio-technical congruence can determine changeset success, we pose the question: 
-"\textit{Is it possible to locate harmful dependency structures among contributors inside
-of changesets with technical dependencies and can we predict future changeset failures
-while providing recommendations to solve these failures.?}"
+With the power of technical dependencies in predicting software failures , we pose the question: 
+"\textit{Is it possible to locate harmful dependencies among developers connected through 
+technical dependencies that are affected by changesets?}"
 
 % Explain our brief intended approach
-This paper explains our attempt to create a failure prediction system on a per changeset basis using
-the detection of harmful structures among developer networks.
+This paper explains our attempt to detect harmful structures among developer networks.
 Our process utilizes changesets and the call hierarchies effected  to find patterns of contributor 
 relationships in successful and failed changesets.  We can use these contributor relationships 
 to also promote the idea of socio-technical congruence with communications recommendations.
 
-
-\section{Methodology}
-
-\subsection{Extracting Technical Networks}
-In order to determine whether a changeset was a success or failure (introduces a software
-failure), we use the approach of Sliwerski et al.~\cite{Sliwerski:2005:CIF}.
-
-To extract the technical dependencies of a given changeset, we first construct a method
-call graph using Eclipse's ASTParser. 
-Unlike  Bodden's et al.~\cite{Bodden:2003:HVJ} and other's approaches of using byte code
-and whole projects, we built call graphs using source code, which does not have the assumptions
-of being able to compile or have access to all project files.
-
-We then use the Git software repository to determine what changes were made to any given
-file inside of the changeset. Specifically, we look for modified methods inside of the changeset
-files.
-
-After discovering which methods have been changed, we can use the call graph to determine
-which methods call those that have been changed. This creates a technical dependency between
-the callers and the callee’s (changed) method. From this dependency, we can add contributors (owners) 
-of the methods.
-
-We extrapolate the owners of each method in the dependencies from the Git repository 
-(Git stores contributor per line number for each file).  We now have our technical dependency 
-network based on method call hierarchy with contributors (Figure~\ref{fig:network} left hand side).
-We simplify the network by only using the connection between contributors since we 
-are only interested in discovering the problematic edges between contributors and not the 
-methods themselves (Figure~\ref{fig:network} right hand side). This is our final technical 
-network.
-
 % Technical network figure
 \begin{figure*}[tb!]
 \centering
-\includegraphics[width=0.9\textwidth, scale=0.5]{images/TecNetwork}
+\includegraphics[width=0.9\textwidth]{images/TecNetwork}
 \caption{A technical network for a changeset. Cody has changed method getX() which is being
 called by Bart's method foo() as well as Daisy and Adam's method bar().\label{fig:network}}
 \end{figure*}
 
+\section{Methodology}
+
+\subsection{Extracting Technical Networks}
+% End goal
+Our goal, is to create a technical network of contributors based on method ownership
+and those method's call hierarchies effected by changesets. These networks will provide
+dependency edges between contributors caused by changesets which may be 
+identified as possible harmful pairings. (Figure~\ref{fig:network}). To achieve this goal,
+we must identify contributor owners of methods, method call hierarchies (our technical
+dependencies) and changeset effects on these hierarchies.
+
+% Owners
+To determine which contributors own which methods at a given changeset, we query
+the Git repository. Git stores contributors of a file per line, which we can use to extrapolate
+a percentage of ownership given a method inside the file.
+
+% Call Graph
+To extract method call hierarchies in a project at a given changeset, we must construct
+a method call graph. Unlike other approaches such as Bodden's et al.~\cite{Bodden:2003:HVJ} 
+of using byte code and whole projects, we built call graphs directly from source code files
+inside of a changeset, 
+which does not have the assumptions of being able to compile or have access to all project 
+files. It is important, for us, to not require project compilation at each changeset because it is
+an expensive operation to do so as well as the changeset's effects may cause the project
+to be unable to compile. Using source files also allows us to update our call graph
+with changed files as opposed to completely rebuilding at 
+every changeset. This creates a rolling call graph which 
+can be used to show method hierarchy at each changeset inside a project opposed to
+a static project view.
+
+% Changeset effects
+We now need to find a changeset's effect, if any, to the call hierarchy. We use the Git
+software repository to determine what changes were made to any give file inside a 
+changeset. Specifically, we look for methods modified by a changeset. We now use
+the call graph to determine which methods call those that have been changed, which
+gives the changeset's technical dependencies.
+
+%Resulting network
+These procedures, result in a technical network based on contributor method ownership 
+inside a call hierarchy effected by a changeset (Figure~\ref{fig:network} left hand side).
+We simplify the network by only using edges between contributors since we 
+are only interested in discovering the problematic edges between contributors and not the 
+methods themselves (Figure~\ref{fig:network} right hand side). This is our final technical 
+network.
+
 \subsection{Identifying Harmful Structures}
-To identify harmful structures (edges) inside of our technical networks, we analyze these 
-edges in relation to changeset failure. We proceed in the following steps:
+To identify harmful structures (edges) inside technical networks, we analyze 
+edges in relation to discovered changeset failures. To determine whether a changeset 
+was a success or failure (introduces a software failure), we use the approach of
+Sliwerski et al.~\cite{Sliwerski:2005:CIF}. We then proceed in the following steps:
 
 \begin{enumerate}
 \item Identify all possible edges from the technical networks.
@@ -136,30 +146,39 @@ edges in relation to changeset failure. We proceed in the following steps:
 \item Determine if the edge is related to success or failure.
 \end{enumerate}
 
-To determine an edge's relation to success or failure we use a Fischer Exact Value test
-who's p-value is stored in our results table (Table~\ref{tab:ratio}). Pairs with the highest
-p-values are said to be harmful structures inside of a project.
+To determine an edge's relation to success or failure, we create the value FI (failure
+index) which represents the normalized chance of a changeset failure in the presence
+of the edge. 
+
+\begin{equation}
+FI = \frac{edge_{failed} / total_{failed}}{edge_{failed} / total_{failed} + edge_{success} / total_{success}}
+\end{equation}
+
+Contributor pairs with the highest FI value are said to be harmful structures
+inside a project. We store these edges in Table~\ref{tab:ratio}. We also store
+a Fisher Exact Value test p-value on edge appearance in successful and failed
+changesets, and non-appearance in successful and failed changesets for a view
+of statistical significance.
+
 
 \section{Results}
 For this paper, we choose to study the Hibernate-ORM project which is an open source Java 
 application hosted on GitHub\footnote{https://github.com/}. The issue tracking for this 
 project is performed by Jira\footnote{http://www.atlassian.com/software/jira/overview}.
 
-We chose this project because it utilizes Java for all internal structures and control flow which
-is ideal for creating large method call graphs. This project is also source controlled with Git
-which allows the use of Git's internal tools for traversing the repository and mining
-information. Finally, Hibernate-ORM uses issue tracking software which can easily be mined
-using a provided API which is ideal for determining changeset success or failure.
+We chose this project because it is written in Java for all internal structures and control flow
+and uses Git for version control. Hibernate-ORM also uses issue tracking software which 
+is needed for determining changeset success or failure~\cite{Sliwerski:2005:CIF}.
 
 In Hibernate-ORM, we found a total of X contributor pairs existed over the entire project, 
-of which Y were found to be harmful inside of the system (A p-value of F or higher). 
-We rank the pairings by their respective p-values(Table~\ref{tab:ratio}).
+of which Y were found to be harmful inside of the system (A FI value of G or higher). 
+We rank the pairings by their respective FI values(Table~\ref{tab:ratio}).
 
 \begin{table}[h]
 \begin{center}
 \begin{tabular}{@{\hspace{.2cm}}ccc@{\hspace{.75cm}}c@{\hspace{.2cm}}}
 \hline
-Pair & Successful & Failed & P-Value\\
+Pair & Successful & Failed & FI\\
 \hline
 (Cody, Daisy)	&	0&	12&	1		\\
 (Adam, Daisy)	&	1&	14&	0.9697	\\
@@ -167,20 +186,20 @@ Pair & Successful & Failed & P-Value\\
 \hline
 \end{tabular}
 \end{center}
-\caption{The top 3 harmful contributor pairs found and ordered by failure ratio.\label{tab:ratio}}
+\caption{The top 3 harmful contributor pairs found and ordered by FI.\label{tab:ratio}}
 \end{table}
 
 By recognizing known harmful pairings in new changeset networks, we can also predict that a
 given changeset will fail based on these pairings p-value. We were able to predict 
 W out of Z failures from a sample size of T  given changesets inside of Hibernate-ORM 
-with Q false positives. Given 
-the known harmful pairing, we can also recommend communication between the two 
-contributors to support the notion of socio-technical congruence.
+with Q false positives. More importantly, given 
+the known harmful pairing, we can recommend communication between the two 
+contributors.
 
 
 \section{Conclusion and Future Work}
 Technical dependencies are often used to predict software failures
-in large software system~\cite{Pinzger:2008:DNP, Zimmermann:2008:PDU}. 
+in large software system~\cite{Pinzger:2008:DNP, Zimmermann:2008:PDU, Kim:2006:AIB}. 
 We have found evidence that technical dependencies predict failures based on contributor
 dependencies found in changesets. Through the contributor dependencies,
 we can also give recommendations to contributors about whom to contact to
