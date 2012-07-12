@@ -13,59 +13,62 @@
 
 % Paper title
 % Can use linebreaks \\ within to get better formatting as desired
-\title{Changeset Based Communication to Prevent Software Failures}
+\title{Changeset Based Communication to Detect Software Failures}
 
-% Author names
-% Use a multiple column layout for up to three different affiliations
-\author{\IEEEauthorblockN{Jordan Ell}
-\IEEEauthorblockA{University of Victoria\\
-Victoria, British Columbia\\
-jell@uvic.ca}
-\and
-\IEEEauthorblockN{Triet Huynh}
-\IEEEauthorblockA{University of Victoria\\
-Vancouver, British Columbia\\
-triethuynhm@gmail.com}
-\and
-\IEEEauthorblockN{Braden Simpson}
-\IEEEauthorblockA{University of Victoria\\
-Victoria, British Columbia\\
-braden@uvic.ca}}
-
+% Authors names
+\author{\IEEEauthorblockN{Jordan Ell,
+Triet Huynh,
+Braden Simpson, 
+Adrian Schr{\"o}ter and
+Daniela Damian}
+\IEEEauthorblockA{University of Victoria,
+Victoria, British Columbia\\\{jell, infiro, braden\}@uvic.ca, schadr@acm.org, danielad@cs.uvic.ca}
+%\IEEEauthorblockA{\IEEEauthorrefmark{2}University of Victoria\\
+%Victoria, British Columbia\\ infiro@uvic.ca}
+%\IEEEauthorblockA{\IEEEauthorrefmark{3}University of Victoria\\
+%Victoria, British Columbia\\ braden@uvic.ca}
+%\IEEEauthorblockA{\IEEEauthorrefmark{4}University of Victoria\\
+%Victoria, British Columbia\\ schadr@uvic.ca}
+%\IEEEauthorblockA{\IEEEauthorrefmark{5}University of Victoria\\
+%Victoria, British Columbia\\ danielad@cs.uvic.ca}}
+}
 % make the title area
 \maketitle
 
 
 % talk about networks. 
 \begin{abstract}
-As software systems get more complex, the companies developing them consist of larger teams and therefore produce more complex communication artifacts.  As these software systems grow, so does the impact of every action to the product.  To find out how to prevent software failure created by this growth and complexity, companies need to find out more efficient and effective ways to communicate.  This paper provides an analysis of communications artifacts, linked to changesets by using multiple methods of textual analysis on the artifact, as well as the changeset.  These methods result in links that provide ways to analyze these communication artifacts and their participants to produce a historical representation in the form of networks, which can be used to software failures based on participants and communication.
+As software systems get more complex, the companies developing them consist of larger teams and therefore produce more complex communication artifacts.  As these software systems grow, so does the impact of every action to the product.  To find out how to prevent software failure created by this growth and complexity, companies need to find out more efficient and effective ways to communicate.  This paper provides an analysis of communications artifacts, linked to changesets by using multiple methods of textual analysis on the artifact, as well as the changeset.  These methods results in analysis of these communication artifacts and their participants to produce a historical representation in the form of social networks, which can be used to detect software failures based on participants and communication.
 \end{abstract}
 
 \section{Introduction}
 
 % Setup problem
-Software failures are a bigger, more prevalent problem now than ever.  These failures can be catastrophic, causing billions of lost dollars, or even lives.  The main cause of these software failures is because the companies and products are larger than ever, and as a company and product grows in both size and complexity, the difficulty of developing high quality products is vastly increased.  One tactic companies employ to ease this is to make use of powerful communication and organization systems such as (BugZilla\footnote{http://bugzilla.org}, Jira\footnote{http://atlassian.com/software/jira/overview}, RTC\footnote{http://www-01.ibm.com/software/rational/products/rtc/}, etc.).  These systems provide bug reports and other communication artifacts, which are the core components implementing a software product during development, the importance of which has been researched by Timo Wolf et al\cite{?}, however they research at the build level, not changeset.  The impact of these communication artifacts on the project is massive, and any way to improve the impact or life-cycle of these communication artifacts is greatly desired.  Using social networks constructed from changesets, we study the participants and resultant snapshot of the project at that changeset to determine if there are harmful patterns of communication.  
+Software failure is a bigger, more prevalent problem now than ever.  These failures can be catastrophic, causing billions of lost dollars, or even lives.  The main cause of these software failures are larger companies and products and their inherent complexity, causing the difficulty of developing high quality products to greatly increase.  One tactic employed to ease this difficulty is to make use of powerful collaborative development environments (CDE) such as (BugZilla\footnote{http://bugzilla.org}, Jira\footnote{http://atlassian.com/software/jira/overview}, RTC\footnote{http://www-01.ibm.com/software/rational/products/rtc/}, etc.).  These systems provide bug reports and other communication artifacts, the core components implementing a software product during development.  The importance of these components has been researched by Wolf et al\cite{4721184}.  The impact of these communication artifacts on the project is significant, and improving the impact or life-cycle of these communication artifacts is greatly desired.  Using social networks based on changesets, we study the participants and resultant snapshot of the project at that changeset to determine if there are any potentially harmful patterns of communication present.  
 
 % Other research 
-Other researchers such as Bettenburg et al have done work to link communication artifacts to source code\cite{Bettenburg:2008:ESI:1370750.1370757}.  As well Sliwerski et al have tried to link fixes(changesets) to their corresponding bug reports\cite{Sliwerski:2005:CIF:1083142.1083147}.  These studies can assist us to understand the direct impact of the communication, and all the effected artifacts.
+Other researchers such as Bettenburg et al. have done work to link communication artifacts to source code\cite{Bettenburg:2008:ESI:1370750.1370757}.  As well Sliwerski et al. have tried to link fixes(changesets) to their corresponding bug reports\cite{Sliwerski:2005:CIF:1083142.1083147}.  These studies can assist us to understand the direct impact of the communication, and all the effected artifacts.  
 
 % Question
-When companies use these systems, over time, there emerges patterns of communication that can be observed, and actioned upon.  These patterns are a result of the people involved in the communication artifacts at the given changeset.   So this causes us to ask the question: \textit{"Are there harmful communication patterns in social networks constructed from changesets?"}.  
+When companies make use of a CDE, over time, there emerges patterns of communication that can be observed, and actioned upon.  These patterns are a result of the people involved in the communication artifacts at the given changeset.   So this causes us to ask the question: \textit{"Are there harmful communication patterns in social networks based on changesets and communications artifacts?"}  
 
 % Method
-This paper details our attempt at finding social networks at a changeset, and evaluating if any "harmful" communication patterns can be detected by  . These networks are useful for determining certain problematic groups of participants, or problem areas of a project that require more communication that another due to a more complex technical background, or steep learning curve. 
+This paper details our attempt at finding social networks at a changeset, and evaluating if any potentially harmful communication patterns can be detected.  These networks are useful for finding the potentially harmful patterns such as certain problematic groups of participants, or problem areas of a project that require more communication that another due to a more complex technical background.
 
-However, finding these patterns is non-trivial, and this study attempts to find out if harmful patterns of communication appear, and how to avoid them if so.
-
+\section{Data Collection}
+We used Hibernate-ORM\footnote{An open source Java library that is used for creating object-relational mappings for data-modeling} as a case study.  It is hosted on GitHub, and managed by Jira\footnotemark[2].  Our project requires that both the repository information and the CDE data is able to be mined in order to create the social networks. 
 
 % reference this in our methodology section
-% For analysis on bug reports and changesets to be relevant, first the fix-inducing changesets\cite{Sliwerski:2005:CIF:1083142.1083147} and their corresponding fixing changesets have to be determined.
+\section{Methodology}
+In the following sections we describe our methods used to detect software failures by examing changeset based social networks.
+
+\subsection{Linking CDE Data to Changesets}
+There are mutliple ways that we approach this problem simultaneously, since there are no guaranteed methods of constructing these links.  First the    
+
+
+\subsection{Determine Fix-Inducing Changes}
 
 The next step is to construct networks of communication between participants of the communications artifacts for each changeset.  Then, based on these per-changeset networks, analyze the patterns created and determine basic measures of quality.  Some of these being based on these links, making  
-
-\hfill mds
- 
-\hfill January 11, 2007
 
 \subsection{Subsection Heading Here}
 Subsection text here.
