@@ -6,6 +6,8 @@
 
 % Use of outside images
 \usepackage{graphicx} 
+% Use text inside euqations
+\usepackage{amsmath}
 
 % Correct bad hyphenation here
 \hyphenation{op-tical net-works semi-conduc-tor}
@@ -50,9 +52,9 @@ to solve these failures inside of changesets.
 
 % Setup the problem.
 Large software projects are created using highly modular and 
-reusable code. The problem this creates, is that methods or functions
-can be used in a wide variety of locations throughout the project creating technical 
-dependencies.  This causes changes to any given method to have a rippling 
+reusable code. This creates technical dependencies between methods or functions
+that can be used in a wide variety of locations throughout the project. 
+This causes changes to any given method to have a rippling 
 effect across the rest of the project~\cite{Acharya:2011:PCI}. The larger these effects are,
 the more likely they are to cause a software failure inside the system during the project's
 life span~\cite{Zimmermann:2008:PDU}. These observations open the door to many types
@@ -111,7 +113,7 @@ of using byte code and whole projects, we built call graphs directly from source
 inside of a changeset, 
 which does not have the assumptions of being able to compile or have access to all project 
 files. It is important, for us, to not require project compilation at each changeset because it is
-an expensive operation to do so as well as the changeset's effects may cause the project
+an expensive operation as well as the changeset's effects may cause the project
 to be unable to compile. Using source files also allows us to update our call graph
 with changed files as opposed to completely rebuilding at 
 every changeset. This creates a rolling call graph which 
@@ -136,7 +138,7 @@ network.
 \subsection{Identifying Harmful Structures}
 To identify harmful structures (edges) inside technical networks, we analyze 
 edges in relation to discovered changeset failures. To determine whether a changeset 
-was a success or failure (introduces a software failure), we use the approach of
+was a success or failure (introduce a software failure), we use the approach of
 Sliwerski et al.~\cite{Sliwerski:2005:CIF}. We then proceed in the following steps:
 
 \begin{enumerate}
@@ -151,14 +153,14 @@ index) which represents the normalized chance of a changeset failure in the pres
 of the edge. 
 
 \begin{equation}
-FI = \frac{edge_{failed} / total_{failed}}{edge_{failed} / total_{failed} + edge_{success} / total_{success}}
+\text{FI} = \frac{ \text{edge}_{failed} / \text{total}_{failed}}{\text{edge}_{failed} / \text{total}_{failed} + \text{edge}_{success} / \text{total}_{success}}
 \end{equation}
 
 Contributor pairs with the highest FI value are said to be harmful structures
-inside a project. We store these edges in Table~\ref{tab:ratio}. We also store
-a Fisher Exact Value test p-value on edge appearance in successful and failed
-changesets, and non-appearance in successful and failed changesets for a view
-of statistical significance.
+inside a project. We store these edges in Table~\ref{tab:ratio}. We also perform
+a Fisher Exact Value test on edge appearance in successful and failed
+changesets, and non-appearance in successful and failed changesets to only
+consider statistically significant edges. 
 
 
 \section{Results}
@@ -166,7 +168,8 @@ For this paper, we choose to study the Hibernate-ORM project which is an open so
 application hosted on GitHub\footnote{https://github.com/}. The issue tracking for this 
 project is performed by Jira\footnote{http://www.atlassian.com/software/jira/overview}.
 
-We chose this project because it is written in Java for all internal structures and control flow
+We chose this project because our tool only handles Java code and it is written in Java 
+for all internal structures and control flow
 and uses Git for version control. Hibernate-ORM also uses issue tracking software which 
 is needed for determining changeset success or failure~\cite{Sliwerski:2005:CIF}.
 
@@ -196,7 +199,7 @@ with Q false positives. More importantly, given
 the known harmful pairing, we can recommend communication between the two 
 contributors.
 
-
+What 
 \section{Conclusion and Future Work}
 Technical dependencies are often used to predict software failures
 in large software system~\cite{Pinzger:2008:DNP, Zimmermann:2008:PDU, Kim:2006:AIB}. 
