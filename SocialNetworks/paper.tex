@@ -47,7 +47,7 @@ As software systems get more complex, the companies developing them consist of l
 Software failure is a bigger, more prevalent problem now than ever.  These failures can be catastrophic, causing billions of lost dollars, or even lives.  The main cause of these software failures are larger companies and products and their inherent complexity, causing the difficulty of developing high quality products to greatly increase.  One tactic employed to ease this difficulty is to make use of powerful collaborative development environments (CDE) such as (BugZilla\footnote{http://bugzilla.org}, Jira\footnote{http://atlassian.com/software/jira/overview}, RTC\footnote{http://www-01.ibm.com/software/rational/products/rtc/}, etc.).  These systems provide bug reports and other communication artifacts, the core components implementing a software product during development.  The importance of these components has been researched by Wolf et al\cite{4721184}.  The impact of these communication artifacts on the project is significant, and improving the impact or life-cycle of these communication artifacts is greatly desired.  Using social networks based on changesets, we study the participants and resultant snapshot of the project at that changeset to determine if there are any potentially harmful patterns of communication present.  
 
 % Other research 
-Other researchers such as Bettenburg et al. have done work to link communication artifacts to source code\cite{Bettenburg:2008:ESI:1370750.1370757}.  As well Sliwerski et al. have tried to link fixes(changesets) to their corresponding bug reports\cite{Sliwerski:2005:CIF:1083142.1083147}.  These studies can assist us to understand the direct impact of the communication, and all the effected artifacts.  
+Other researchers such as Bettenburg et al\cite{Bettenburg:2008:ESI:1370750.1370757}. have done work to link communication artifacts to source code.  As well Sliwerski et al\cite{Sliwerski:2005:CIF:1083142.1083147}. have tried to link fixes(changesets) to their corresponding bug reports.  These studies can assist us to understand the direct impact of the communication, and all the effected artifacts.  
 
 % Question
 When companies make use of a CDE, over time, there emerges patterns of communication that can be observed, and actioned upon.  These patterns are a result of the people involved in the communication artifacts at the given changeset.   This causes us to ask the question: \textit{"Are there harmful communication patterns in social networks based on changesets and communications artifacts?"}  
@@ -59,7 +59,7 @@ This paper details our attempt at finding social networks at a changeset, and ev
 Our goal is to detect potentially harmful patterns in social networks, and in the following sections we describe our methods used to detect these patterns by examining changeset based social networks.
 
 \subsection{Linking CDE Data to Changesets}
-Our goal here is to isolate all the communication artifacts that are involved in each changeset.  First, we attempt to link by checking the changeset comment for communication related identifiers, usually unique to the specific project.  These identifiers were obscure, so as to not provide false positives when matching.  When a strict match to this identifier is found, we construct a link between this changeset and the resulting issue(bug).  We consider this link to be of weight \textit{1.0}, out of our weighting scale from \textit{0.0 - 1.0}.  
+Our goal here is to isolate all the communication artifacts that are involved in each changeset.  First, we attempt to link by checking the changeset comment for communication related identifiers, usually unique to the specific project.   When a strict match to this identifier is found, we construct a link between this changeset and the resulting issue(bug).  We consider this link to be of weight \textit{1.0}, out of our weighting scale from \textit{0.0 - 1.0}.  
 
 \begin{figure}[h!]
 \centering
@@ -78,7 +78,7 @@ After all the changeset comments have been parsed, we then attempt another metho
 In Fig. 2, for example, there are links created between \emph{Changeset 1} and \emph{Comment 1}, since there is a \emph{Stacktrace} in \emph{Comment 1} that contains a match to the filename \emph{'A.java'} in \emph{Changeset 1}.  This will create a link between these artifacts and changesets, allowing us to determine the impact of the social network created by these communication artifacts surrounding a changeset.
 
 \subsection{Creating Social Networks} 
-We 
+To create the social networks for a commit, we get all the linked communication to a changeset.   and then constuct what we call a \emph{thread}
 
 \subsection{Determine Fix-Inducing Changes}
 We qualify each commit as either a pass or fail, pass meaning that it was a commit that did not introduce a bug, and conversely a fail is a commit that introduced a bug.  The method used to calculate this was derived from Sliwerski et al.\cite{Sliwerski:2005:CIF:1083142.1083147}. 
