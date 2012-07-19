@@ -3,6 +3,7 @@
 % Simpson in association with Adrian Schroeter and Daniela Damian.
 \documentclass[conference]{IEEEtran}
 \usepackage{graphicx}
+\usepackage{amsmath}
 
 % Correct bad hyphenation here
 \hyphenation{op-tical net-works semi-conduc-tor}
@@ -16,27 +17,15 @@
 \title{Changeset Based Communication to Detect Software Failures}
 
 % Authors names
-\author{\IEEEauthorblockN{Jordan Ell,
-Triet Huynh,
-Braden Simpson, 
-Adrian Schr{\"o}ter and
-Daniela Damian}
+\author{\IEEEauthorblockN{
+Braden Simpson}
 \IEEEauthorblockA{University of Victoria,
-Victoria, British Columbia\\\{jell, infiro, braden\}@uvic.ca, schadr@acm.org, danielad@cs.uvic.ca}
-%\IEEEauthorblockA{\IEEEauthorrefmark{2}University of Victoria\\
-%Victoria, British Columbia\\ infiro@uvic.ca}
-%\IEEEauthorblockA{\IEEEauthorrefmark{3}University of Victoria\\
-%Victoria, British Columbia\\ braden@uvic.ca}
-%\IEEEauthorblockA{\IEEEauthorrefmark{4}University of Victoria\\
-%Victoria, British Columbia\\ schadr@uvic.ca}
-%\IEEEauthorblockA{\IEEEauthorrefmark{5}University of Victoria\\
-%Victoria, British Columbia\\ danielad@cs.uvic.ca}}
-}
+Victoria, British Columbia}
+braden@uvic.ca}
+
 % make the title area
 \maketitle
 
-
-% talk about networks. 
 \begin{abstract}
 As software systems get more complex, the companies developing them consist of larger teams and therefore resulting in more complex communication artifacts.  As these software systems grow, so does the impact of every action to the product.  To find out how to prevent software failure created by this growth and complexity, companies need to find out more efficient and effective ways to communicate.  This paper provides an analysis of communications artifacts, linked to changesets by using multiple methods of textual analysis on the artifact, as well as the changeset.  These methods results in analysis of these communication artifacts and their participants to produce a historical representation in the form of social networks, which can be used to detect software failures based on participants and communication.
 \end{abstract}
@@ -44,62 +33,84 @@ As software systems get more complex, the companies developing them consist of l
 \section{Introduction}
 
 % Setup problem
-Software failure is a bigger, more prevalent problem now than ever.  These failures can be catastrophic, causing billions of lost dollars, or even lives.  The main cause of these software failures are larger companies and products and their inherent complexity, causing the difficulty of developing high quality products to greatly increase.  One tactic employed to ease this difficulty is to make use of powerful collaborative development environments (CDE) such as (BugZilla\footnote{http://bugzilla.org}, Jira\footnote{http://atlassian.com/software/jira/overview}, RTC\footnote{http://www-01.ibm.com/software/rational/products/rtc/}, etc.).  These systems provide bug reports and other communication artifacts, the core components implementing a software product during development.  The importance of these components has been researched by Wolf et al\cite{4721184}.  The impact of these communication artifacts on the project is significant, and improving the impact or life-cycle of these communication artifacts is greatly desired.  Using social networks based on changesets, we study the participants and resultant snapshot of the project at that changeset to determine if there are any potentially harmful patterns of communication present.  
+Miscommunication among contributors during software development can lead to software failures, causing billions of lost dollars or even lethal accidents. \cite{Wolf:2009:PBF:1555001.1555017} The main cause of this miscommunication is larger products and teams, and their inherent complexity, causing the difficulty of developing high quality products to greatly increase.  One tactic employed to ease this difficulty is to make use of collaborative development environments (CDE) such as (BugZilla\footnote{http://bugzilla.org}, Jira\footnote{http://atlassian.com/software/jira/overview}, etc.)\cite{CDE}.  These systems provide bug reports and other communication artifacts which provide a medium for better contributor communication.  Using social networks based on changesets, we study the participants and resultant snapshot of the project at that changeset to determine if there are any potentially harmful patterns of communication present.  
 
 % Other research 
-Other researchers such as Bettenburg et al. have done work to link communication artifacts to source code\cite{Bettenburg:2008:ESI:1370750.1370757}.  As well Sliwerski et al. have tried to link fixes(changesets) to their corresponding bug reports\cite{Sliwerski:2005:CIF:1083142.1083147}.  These studies can assist us to understand the direct impact of the communication, and all the effected artifacts.  
+Other researchers such as Bettenburg et al. have done work to link communication artifacts to source code \cite{Bettenburg:2008:ESI:1370750.1370757}.  As well Sliwerski et al. have tried to link fixes(changesets) to their corresponding bug reports \cite{Sliwerski:2005:CIF:1083142.1083147}.  These studies can assist us to understand the direct impact of the communication, and all the effected artifacts.  
 
 % Question
-When companies make use of a CDE, over time, there emerges patterns of communication that can be observed, and actioned upon.  These patterns are a result of the people involved in the communication artifacts at the given changeset.   This causes us to ask the question: \textit{"Are there harmful communication patterns in social networks based on changesets and communications artifacts?"}  
+This study constructs social networks on a changeset basis over a project's lifetime.  It then analyzes the history of networks for potential pattern, defined as an unordered pair of contributors of communication, which leads us to ask \textit{"Are there harmful communication patterns in social networks based on changesets and communications artifacts?"} 
 
 % Method
-This paper details our attempt at finding social networks at a changeset, and evaluating if any potentially harmful communication patterns can be detected.  These networks are useful for finding the potentially harmful patterns such as certain problematic groups of participants, or problem areas of a project that require more communication that another due to a more complex technical background. 
+This paper details our approach at linking social networks to changes, and evaluating if any potentially harmful communication patterns can be detected.  These networks are useful for finding the potentially harmful patterns such as certain problematic groups of participants, or problem areas of a project that require more communication that another due to a more complex technical background. 
 
 \section{Methodology}
 Our goal is to detect potentially harmful patterns in social networks, and in the following sections we describe our methods used to detect these patterns by examining changeset based social networks.
 
 \subsection{Linking CDE Data to Changesets}
-Our goal here is to isolate all the communication artifacts that are involved in each changeset.  First, we attempt to link by checking the changeset comment for communication related identifiers, usually unique to the specific project.  These identifiers were obscure, so as to not provide false positives when matching.  When a strict match to this identifier is found, we construct a link between this changeset and the resulting issue(bug).  We consider this link to be of weight \textit{1.0}, out of our weighting scale from \textit{0.0 - 1.0}.  
+Our goal here is to isolate all the communication artifacts that are related to each changeset.  
 
-\begin{figure}[h!]
+\subsubsection{Changeset Message}
+First we link by checking the changeset comment for communication related identifiers, usually unique to the specific project.  When a strict match to this identifier is found, we construct a link between this changeset and the resulting issue(bug).  
+
+\begin{figure}[b!]
 \centering
-\includegraphics[width=1.0\columnwidth]{CommitsToChangesets}
+\includegraphics[width=1.0\columnwidth]{CommitsToChangesets1}
 \caption{The unique issue identifier found in a changeset comment.\label{fig:identifier}}
 \end{figure}
 
-After all the changeset comments have been parsed, we then attempt another method to link the communication to source files, at a certain date-range in the repository based on the date of the communication.  We accomplish this by parsing the communications artifacts for \textit{Stacktraces, Patches}, and \textit{Code Snippets} using similar methods as Bettenburg et al.\cite{Bettenburg:2008:ESI:1370750.1370757}.  We create confidence of each link based on the percentage of matched content, and stop at a threshold of 30 percent.  Once the links to files are created, we then check over a date range of X days around the time of the communication artifact for changesets that alter those files, and construct a link when one exists.  The weight of these links is calculated by the ratio of files referenced in the artifact to files matched in the changeset.
+\subsubsection{Parsing Communication Artifacts}
+Second, after parsing changeset comments, we use another method to link the communication to source files.  We choose a set of communication artifacts that are within a certain project-specific date-range from the selected changeset.  We continue by parsing the communications artifacts for \textit{Stacktraces, Patches}, and \textit{Code Snippets} using similar methods as Bettenburg et al. \cite{Bettenburg:2008:ESI:1370750.1370757}.  We create confidence of each link based on the percentage of matched content, and stop at a threshold of 30 percent, to eliminate false positives.  Once the links to files are created, we then check over the changesets that alter those files, and construct a link when one exists.  
 
-\begin{figure}[hb!]
+\begin{figure}[t!]
 \centering
 \includegraphics[width=1.0\columnwidth]{Items}
 \caption{Timeline of issue, comments and changesets.\label{fig:items}}
 \end{figure}
 
-In Fig. 2, for example, there are links created between \emph{Changeset 1} and \emph{Comment 1}, since there is a \emph{Stacktrace} in \emph{Comment 1} that contains a match to the filename \emph{'A.java'} in \emph{Changeset 1}.  This will create a link between these artifacts and changesets, allowing us to determine the impact of the social network created by these communication artifacts surrounding a changeset.
+In Fig 2, for example, there are links created between \emph{Changeset 1} and \emph{Comment 1}, since there is a \emph{Stacktrace} in \emph{Comment 1} that contains a match to the filename \emph{'A.java'} in \emph{Changeset 1}.  This will create a link between artifact and changeset, allowing us to determine the impact of the social network created by these communication artifacts surrounding a changeset.
 
 \subsection{Creating Social Networks} 
-We 
+Since our goal here is to create the networks that are related to a single changeset, our strategy to construct the networks is similar to Wolf et al \cite{4721184}, except that we construct edges from contributor to contributor.  The approach taken is repository and tool-independent, and results in networks composed of nodes and edges where the nodes are unique people involved in the communication and the edges are a weighted representation of the communication between those people at the given changeset.  We create these edges like \emph{(Adam, Bart, Weight)} where \emph{Adam, Bart} are given by the creators of the artifacts that were linked, and the weight is a normalized count of the number of times they communicated.   
 
 \subsection{Determine Fix-Inducing Changes}
-We qualify each commit as either a pass or fail, pass meaning that it was a commit that did not introduce a bug, and conversely a fail is a commit that introduced a bug.  The method used to calculate this was derived from Sliwerski et al.\cite{Sliwerski:2005:CIF:1083142.1083147}. 
-
-\subsection{Social Network Analysis}
-The next step is to construct networks of communication between participants of the communications artifacts for each changeset.  Then, based on these per-changeset networks, analyze the patterns created and calculate our measures such as .  Some of these being based on these links, making 
+We qualify each commit as either a pass or fail, pass meaning that it was a commit that did not introduce a bug, and conversely a fail is a commit that introduced a bug.  We used the method from Sliwerski et al \cite{Sliwerski:2005:CIF:1083142.1083147} to infer fix-inducing changes. 
 
 \section{Results}
 \subsection{Data Collection}
-We used Hibernate-ORM\footnote{An open source Java library that is used for creating object-relational mappings for data-modeling} as a case study.  It is hosted on GitHub, and managed by Jira\footnotemark[2].  Our project requires that both the repository information and the CDE data is able to be mined in order to create the social networks.
+We used Hibernate-ORM\footnote{An open source Java library that is used for creating object-relational mappings for data-modeling, http://hibernate.org} as a case study.  It is hosted on GitHub, and managed by Jira\footnotemark[2].  Our project requires that both the repository information and the CDE data is able to be mined in order to create the social networks.
 
-\subsection{Rest}
-todo figure out title of this section
+\subsection{Detecting Harmful Patterns} 
+We classify a harmful pattern by running the statistics through the following formula to calculate the \emph{Failure Index}, FI of a pattern. We mine the social networks created for each changeset into some statistical patterns.
+
+\begin{equation}
+\text{FI} = \frac{\text{pattern}_{failed}/ \text{total}_{failed}}{\text{pattern}_{failed} / \text{total}_{failed} + \text{pattern}_{success} /\text{total}_{success}}
+\end{equation}
+
+Patterns found with the higher FI values are classified as harmful patterns.  In addition, a Fisher Exact Value test is performed to consider only the statistically significant patterns involved in the networks.   Below are some patterns, with their resulting pass, fail, and 
+
+\begin{table}[t]
+\begin{center}
+\begin{tabular}{@{\hspace{.2cm}}ccc@{\hspace{.75cm}}c@{\hspace{.2cm}}}
+\hline
+Pair & Passed & Failed		\\
+\hline
+(Cody, Daisy)	&	2&	1	&0.6\\
+(Adam, Daisy)	&	2&	6	&0.9\\
+(Bart, Eve)	&	12&	3	&0.43\\
+\hline
+\end{tabular}
+\end{center}
+\caption{Three randomly selected changeset patterns.\label{tab:ratio}}
+\end{table}
+
+Table I results tell us that \emph{Cody} and \emph{Daisy} created two passing commits when they were communicating, and only one failing, Whereas \emph{Adam} and \emph{Daisy} created 6 failing changesets out of 8 when they communicated, potentially classifying them as a harmful pattern.  
+
+[NOTE] stats will be inserted here.
+%INSERT OUR stats here. 
 
 \section{Conclusion and Future Work}
-Describe our conclusion.
-
-
-\section*{Acknowledgment}
-The authors would like to thank yo' mama.
-
+There are several other studies that suggest that better communication practices result in a more successful build rate \cite{Wolf:2009:PBF:1555001.1555017}\cite{Schroter:2010:PBO:1810295.1810456}\cite{4721184}, however they perform these studies at a build level, rather than changeset.  Our studies suggest that each changeset can be individually analyzed and that harmful patterns of communication (either present or absent) can be extracted.  These patterns can then be used to offer potential recommendations when they are found.  For future work we plan on evaluating the social-technical congruence between technical networks and the social networks created in this study to identify other potentially harmful patterns.
 
 \bibliographystyle{IEEEtran}
 \bibliography{paper}
