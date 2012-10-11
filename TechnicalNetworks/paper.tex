@@ -21,13 +21,9 @@
 \title{Finding Harmful Structures Among Developer Networks}
 
 % Authors names
-\author{\IEEEauthorblockN{Jordan Ell,
-Triet Huynh,
-Braden Simpson, 
-Adrian Schr{\"o}ter,
-Daniela Damian}
+\author{\IEEEauthorblockN{Jordan Ell}
 \IEEEauthorblockA{University of Victoria,
-Victoria, British Columbia\\\{jell, infiro, braden\}@uvic.ca, schadr@acm.org, danielad@cs.uvic.ca}
+Victoria, British Columbia \\ jell@uvic.ca}
 }
 
 % Make the title area
@@ -77,7 +73,7 @@ With the power of technical dependencies in predicting software failures , we po
 technical dependencies that are affected by changesets?}"
 
 % Explain our brief intended approach
-This paper explains our attempt to detect harmful structures among developer networks.
+This paper explains our approach to detect harmful structures among developer networks.
 Our process utilizes changesets and the call hierarchies effected  to find patterns of contributor 
 relationships in successful and failed changesets.  We can use these contributor relationships 
 to also promote the idea of socio-technical congruence with communications recommendations.
@@ -183,9 +179,9 @@ We rank the pairings by their respective FI values(Table~\ref{tab:ratio}).
 \hline
 Pair & Successful & Failed & FI\\
 \hline
-(Cody, Daisy)	&	0&	12&	1		\\
-(Adam, Daisy)	&	1&	14&	0.9697	\\
-(Bart, Eve)	&	2&	11&	0.9265      \\
+(Daisy, Adam)	&	0&	14&	1.0000		\\
+(Cody, Bart)	&	1&	12&	0.9190	\\
+(Emma, Fred)	&	1&	9&	0.8948      \\
 \hline
 \end{tabular}
 \end{center}
@@ -193,13 +189,13 @@ Pair & Successful & Failed & FI\\
 \end{table}
 
 By recognizing known harmful pairings in new changeset networks, we can also predict that a
-given changeset will fail based on these pairings p-value. We were able to predict 
+given changeset will fail based on these pairings FI value. We were able to predict 
 W out of Z failures from a sample size of T  given changesets inside of Hibernate-ORM 
 with Q false positives. More importantly, given 
 the known harmful pairing, we can recommend communication between the two 
 contributors.
 
-What 
+
 \section{Conclusion and Future Work}
 Technical dependencies are often used to predict software failures
 in large software system~\cite{Pinzger:2008:DNP, Zimmermann:2008:PDU, Kim:2006:AIB}. 
