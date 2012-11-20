@@ -36,11 +36,11 @@ technical contributors and dependencies have also increased. With these expansio
 the increasing risk of introducing a software failure into a pre-existing system.
 Software failures are a multi-billion dollar problem in the industry today and while integration and
 other forms of testing are helping to ensure a minimal number of failures, research to understand
-full impacts of changesets and their social implications is still a major concern. This paper describes
-how analysis of changesets and the technical relationships they infer can be used to detect harmful
-structures between contributors which may induce software failures. These harmful structures may
+full impacts of code changes and their social implications is still a major concern. This paper describes
+how analysis of code changes and the technical relationships they infer can be used to detect pairs
+of developers whose technical dependencies may induce software failures. These developer pairs may
 also be used to predict future software failures as well as provide recommendations to contributors
-to solve these failures inside of changesets.
+to solve these failures inside of source code changes.
 \end{abstract}
 
 
@@ -53,30 +53,31 @@ that can be used in a wide variety of locations throughout the project.
 This causes changes to any given method to have a rippling 
 effect across the rest of the project~\cite{Acharya:2011:PCI}. The larger these effects are,
 the more likely they are to cause a software failure inside the system during the project's
-life span~\cite{Zimmermann:2008:PDU}. These observations open the door to many types
-of network analysis in regard to technical dependencies and preventing software failures.
+life span~\cite{Zimmermann:2008:PDU}. These observations of technical dependencies open
+the door to types of analysis on the developer networks they infer and preventing software
+failures.
 
 % Explain technical network research that already exists
-Technical dependencies inside a project can be used to predict success or failure of 
-changesets or builds~\cite{Pinzger:2008:DNP, Zimmermann:2008:PDU}. However, most 
+Technical dependencies in a project can be used to predict success or failure of 
+code changes or builds~\cite{Pinzger:2008:DNP, Zimmermann:2008:PDU}. However, most 
 research in this area is based off of identifying
 central modules inside a large code base which are likely to cause software failures or
-detecting frequently changed code that can be associated with with previous failures
+detecting frequently changed code that can be associated with previous failures
 ~\cite{Kim:2006:AIB}. 
-This method also results in predictions 
+This module method also results in predictions 
 at the file or binary level of software development as opposed to a changeset level
 and often lack the ability to provide recommendations other than test focus.
 
 % Research question
-With the power of technical dependencies in predicting software failures , we pose the question: 
-"\textit{Is it possible to locate harmful dependencies among developers connected through 
-technical dependencies that are affected by changesets?}"
+With the power of technical dependencies in predicting software failures , the question is posed: 
+"\textit{Is it possible to locate pairs of developers whose technical dependencies in code changes
+statistically relate to bugs?}"
 
 % Explain our brief intended approach
-This paper explains our approach to detect harmful structures among developer networks.
-Our process utilizes changesets and the call hierarchies effected  to find patterns of contributor 
-relationships in successful and failed changesets.  We can use these contributor relationships 
-to also promote the idea of socio-technical congruence with communications recommendations.
+This paper explains the approach used to locate these pairs of developers among developer networks.
+The process utilizes code changes and the call hierarchies effected  to find patterns of contributor 
+relationships in successful and failed code changes.  We can use these contributor relationships 
+to also promote the idea of socio-technical congruence with coordination recommendations.
 
 % Technical network figure
 \begin{figure*}[tb!]
@@ -90,45 +91,45 @@ called by Bart's method foo() as well as Daisy and Adam's method bar().\label{fi
 
 \subsection{Extracting Technical Networks}
 % End goal
-Our goal, is to create a technical network of contributors based on method ownership
-and those method's call hierarchies effected by changesets. These networks will provide
-dependency edges between contributors caused by changesets which may be 
+The goal, is to create a technical network of contributors based on method ownership
+and those method's call hierarchies effected by code changes. These networks will provide
+dependency edges between contributors caused by code changes which may be 
 identified as possible harmful pairings. (Figure~\ref{fig:network}). To achieve this goal,
-we must identify contributor owners of methods, method call hierarchies (our technical
-dependencies) and changeset effects on these hierarchies.
+we must identify developer owners of methods, method call hierarchies (our technical
+dependencies) and code change effects on these hierarchies.
 
 % Owners
-To determine which contributors own which methods at a given changeset, we query
-the Git repository. Git stores contributors of a file per line, which we can use to extrapolate
+To determine which contributors own which methods at a given code change,
+the Git repository was queried. Git stores contributors of a file per line, which was used to extrapolate
 a percentage of ownership given a method inside the file.
 
 % Call Graph
-To extract method call hierarchies in a project at a given changeset, we must construct
-a method call graph. Unlike other approaches such as Bodden's et al.~\cite{Bodden:2003:HVJ} 
-of using byte code and whole projects, we built call graphs directly from source code files
-inside of a changeset, 
+To extract method call hierarchies in a project at a given code change,
+a method call graph was constructed. Unlike other approaches such as Bodden's et al.~\cite{Bodden:2003:HVJ} 
+of using byte code and whole projects, call graphs were built directly from source code files
+inside of a code change, 
 which does not have the assumptions of being able to compile or have access to all project 
-files. It is important, for us, to not require project compilation at each changeset because it is
-an expensive operation as well as the changeset's effects may cause the project
-to be unable to compile. Using source files also allows us to update our call graph
+files. It was important to not require project compilation at each code change because it is
+an expensive operation as well as the code change effects may cause the project
+to be unable to compile. Using source files also allowed an update to the call graph
 with changed files as opposed to completely rebuilding at 
-every changeset. This creates a rolling call graph which 
-can be used to show method hierarchy at each changeset inside a project opposed to
+every code change. This created a rolling call graph which 
+can be used to show method hierarchy at each code change inside a project opposed to
 a static project view.
 
 % Changeset effects
-We now need to find a changeset's effect, if any, to the call hierarchy. We use the Git
-software repository to determine what changes were made to any give file inside a 
-changeset. Specifically, we look for methods modified by a changeset. We now use
-the call graph to determine which methods call those that have been changed, which
-gives the changeset's technical dependencies.
+The code change effect, if any, to the call hierarchy was then found. The Git
+software repository was used to determine what changes were made to any give file inside a 
+code change. Specifically, methods modified by a code change were searched for. The call graph 
+was then used to determine which methods call those that have been changed, which
+gives the code change technical dependencies.
 
 %Resulting network
-These procedures, result in a technical network based on contributor method ownership 
-inside a call hierarchy effected by a changeset (Figure~\ref{fig:network} left hand side).
-We simplify the network by only using edges between contributors since we 
-are only interested in discovering the problematic edges between contributors and not the 
-methods themselves (Figure~\ref{fig:network} right hand side). This is our final technical 
+These procedures, resulted in a technical network based on contributor method ownership 
+inside a call hierarchy effected by a code change (Figure~\ref{fig:network} left hand side).
+The network was simplified by only using edges between developers since we 
+are only interested in discovering the problematic edges between developers and not the 
+methods themselves (Figure~\ref{fig:network} right hand side). This is the final technical 
 network.
 
 \subsection{Identifying Harmful Structures}
