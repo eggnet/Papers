@@ -83,7 +83,7 @@ to also promote the idea of socio-technical congruence with coordination recomme
 \begin{figure*}[tb!]
 \centering
 \includegraphics[width=0.9\textwidth]{images/TecNetwork}
-\caption{A technical network for a changeset. Cody has changed method getX() which is being
+\caption{A technical network for a code change. Cody has changed method getX() which is being
 called by Bart's method foo() as well as Daisy and Adam's method bar().\label{fig:network}}
 \end{figure*}
 
@@ -132,47 +132,47 @@ are only interested in discovering the problematic edges between developers and 
 methods themselves (Figure~\ref{fig:network} right hand side). This is the final technical 
 network.
 
-\subsection{Identifying Harmful Structures}
-To identify harmful structures (edges) inside technical networks, we analyze 
-edges in relation to discovered changeset failures. To determine whether a changeset 
+\subsection{Identifying Failure Inducing Developer Pairs}
+To identify failure inducing developer pairs (edges) inside technical networks, we analyse 
+edges in relation to discovered code change failures. To determine whether a code change 
 was a success or failure (introduce a software failure), we use the approach of
 Sliwerski et al.~\cite{Sliwerski:2005:CIF}. We then proceed in the following steps:
 
 \begin{enumerate}
 \item Identify all possible edges from the technical networks.
-\item For each edge, count occurrences in technical networks of failed changesets.
-\item For each edge, count occurrences in technical networks of successful changesets.
+\item For each edge, count occurrences in technical networks of failed code changes.
+\item For each edge, count occurrences in technical networks of successful code changes.
 \item Determine if the edge is related to success or failure.
 \end{enumerate}
 
 To determine an edge's relation to success or failure, we create the value FI (failure
-index) which represents the normalized chance of a changeset failure in the presence
+index) which represents the normalized chance of a code change failure in the presence
 of the edge. 
 
 \begin{equation}
 \text{FI} = \frac{ \text{edge}_{failed} / \text{total}_{failed}}{\text{edge}_{failed} / \text{total}_{failed} + \text{edge}_{success} / \text{total}_{success}}
 \end{equation}
 
-Contributor pairs with the highest FI value are said to be harmful structures
+Developer pairs with the highest FI value are said to be harmful structures
 inside a project. We store these edges in Table~\ref{tab:ratio}. We also perform
 a Fisher Exact Value test on edge appearance in successful and failed
-changesets, and non-appearance in successful and failed changesets to only
+code changes, and non-appearance in successful and failed code changes to only
 consider statistically significant edges. 
 
 
 \section{Results}
-For this paper, we choose to study the Hibernate-ORM project which is an open source Java 
-application hosted on GitHub\footnote{https://github.com/}. The issue tracking for this 
+For this paper, the Hibernate-ORM project which is an open source Java 
+application hosted on GitHub\footnote{https://github.com/}, was chosen to study. The issue tracking for this 
 project is performed by Jira\footnote{http://www.atlassian.com/software/jira/overview}.
 
-We chose this project because our tool only handles Java code and it is written in Java 
+This project was chosen because the tool created only handles Java code and it is written in Java 
 for all internal structures and control flow
 and uses Git for version control. Hibernate-ORM also uses issue tracking software which 
-is needed for determining changeset success or failure~\cite{Sliwerski:2005:CIF}.
+is needed for determining code change success or failure~\cite{Sliwerski:2005:CIF}.
 
-In Hibernate-ORM, we found a total of X contributor pairs existed over the entire project, 
-of which Y were found to be harmful inside of the system (A FI value of G or higher). 
-We rank the pairings by their respective FI values(Table~\ref{tab:ratio}).
+In Hibernate-ORM, a total of 46 statistically significant developer pairs were found that existed over the entire project, 
+of which 27 were found to induce failure in the system (A FI value of 0.5 or higher). 
+The pairings are ranked by their respective FI values(Table~\ref{tab:ratio}).
 
 \begin{table}[h]
 \begin{center}
@@ -186,15 +186,8 @@ Pair & Successful & Failed & FI & P-Value\\
 \hline
 \end{tabular}
 \end{center}
-\caption{The top 3 harmful contributor pairs found and ordered by FI.\label{tab:ratio}}
+\caption{The top 3 failure inducing developer pairs found and ordered by FI.\label{tab:ratio}}
 \end{table}
-
-By recognizing known harmful pairings in new changeset networks, we can also predict that a
-given changeset will fail based on these pairings FI value. We were able to predict 
-W out of Z failures from a sample size of T  given changesets inside of Hibernate-ORM 
-with Q false positives. More importantly, given 
-the known harmful pairing, we can recommend communication between the two 
-contributors.
 
 
 \section{Conclusion and Future Work}
