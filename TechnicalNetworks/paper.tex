@@ -18,7 +18,7 @@
 
 % Paper title
 % Can use linebreaks \\ within to get better formatting as desired
-\title{Finding Harmful Structures Among Developer Networks}
+\title{Finding Failure Inducing Developer Pairs Within Developer Networks}
 
 % Authors names
 \author{\IEEEauthorblockN{Jordan Ell}
@@ -83,8 +83,8 @@ to also promote the idea of socio-technical congruence with coordination recomme
 \begin{figure*}[tb!]
 \centering
 \includegraphics[width=0.9\textwidth]{images/TecNetwork}
-\caption{A technical network for a code change. Cody has changed method getX() which is being
-called by Bart's method foo() as well as Daisy and Adam's method bar().\label{fig:network}}
+\caption{A technical network for a code change. Carl has changed method getX() which is being
+called by Bret's method foo() as well as Daniel and Anne's method bar().\label{fig:network}}
 \end{figure*}
 
 \section{Methodology}
@@ -180,9 +180,9 @@ The pairings are ranked by their respective FI values(Table~\ref{tab:ratio}).
 \hline
 Pair & Successful & Failed & FI & P-Value\\
 \hline
-(Daisy, Adam)	&	0&	14&	1.0000& 0.0001249		\\
-(Cody, Bart)	&	1&	12&	0.9190& 0.003468	\\
-(Emma, Fred)	&	1&	9&	0.8948& 0.02165      \\
+(Daniel, Anne)	&	0&	14&	1.0000& 0.0001249		\\
+(Carl, Bret)	&	1&	12&	0.9190& 0.003468	\\
+(Emily, Frank)	&	1&	9&	0.8948& 0.02165      \\
 \hline
 \end{tabular}
 \end{center}
@@ -193,14 +193,13 @@ Pair & Successful & Failed & FI & P-Value\\
 \section{Conclusion and Future Work}
 Technical dependencies are often used to predict software failures
 in large software system~\cite{Pinzger:2008:DNP, Zimmermann:2008:PDU, Kim:2006:AIB}. 
-We have found evidence that technical dependencies predict failures based on contributor
-dependencies found in changesets. Through the contributor dependencies,
-we can also give recommendations to contributors about whom to contact to
-resolve potential issues.
+This paper has presented a method for detecting failure inducing pairs of developers inside
+of technical networks based on code changes. These developer pairs can be used in the prediction
+of future bugs as well as provide coordination reccomendations for developers within a project.
 
-In future work, we will add communication networks on a per commit basis as well. We plan
-to investigate the congruence of these social and technical networks and its effects on 
-software quality.
+In future work, the adding of communication networks on a per commit basis is planned. In this,
+the investigation of social and technical congruence on these networks and its effects on
+software quality will be studied.
 
 
 
