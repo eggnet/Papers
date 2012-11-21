@@ -65,7 +65,7 @@ central modules inside a large code base which are likely to cause software fail
 detecting frequently changed code that can be associated with previous failures
 ~\cite{Kim:2006:AIB}. 
 This module method also results in predictions 
-at the file or binary level of software development as opposed to a changeset level
+at the file or binary level of software development as opposed to a code change level
 and often lack the ability to provide recommendations other than test focus.
 
 % Research question
@@ -75,8 +75,8 @@ statistically relate to bugs?}"
 
 % Explain our brief intended approach
 This paper explains the approach used to locate these pairs of developers among developer networks.
-The process utilizes code changes and the call hierarchies effected  to find patterns of contributor 
-relationships in successful and failed code changes.  We can use these contributor relationships 
+The process utilizes code changes and the call hierarchies effected  to find patterns of developer 
+relationships in successful and failed code changes.  These developer relationships can be used
 to also promote the idea of socio-technical congruence with coordination recommendations.
 
 % Technical network figure
@@ -91,16 +91,16 @@ called by Bret's method foo() as well as Daniel and Anne's method bar().\label{f
 
 \subsection{Extracting Technical Networks}
 % End goal
-The goal, is to create a technical network of contributors based on method ownership
+The goal, is to create a technical network of developers based on method ownership
 and those method's call hierarchies effected by code changes. These networks will provide
 dependency edges between contributors caused by code changes which may be 
-identified as possible harmful pairings. (Figure~\ref{fig:network}). To achieve this goal,
-we must identify developer owners of methods, method call hierarchies (our technical
-dependencies) and code change effects on these hierarchies.
+identified as possible failure inducing pairings. (Figure~\ref{fig:network}). To achieve this goal,
+developer owners of methods, method call hierarchies (our technical
+dependencies) and code change effects on these hierarchies must be identified.
 
 % Owners
-To determine which contributors own which methods at a given code change,
-the Git repository was queried. Git stores contributors of a file per line, which was used to extrapolate
+To determine which developers own which methods at a given code change,
+the Git repository was queried. Git stores developers of a file per line, which was used to extrapolate
 a percentage of ownership given a method inside the file.
 
 % Call Graph
@@ -127,16 +127,16 @@ gives the code change technical dependencies.
 %Resulting network
 These procedures, resulted in a technical network based on contributor method ownership 
 inside a call hierarchy effected by a code change (Figure~\ref{fig:network} left hand side).
-The network was simplified by only using edges between developers since we 
-are only interested in discovering the problematic edges between developers and not the 
+The network was simplified by only using edges between developers since the results
+are only interested in discovering the failure inducing edges between developers and not the 
 methods themselves (Figure~\ref{fig:network} right hand side). This is the final technical 
 network.
 
 \subsection{Identifying Failure Inducing Developer Pairs}
-To identify failure inducing developer pairs (edges) inside technical networks, we analyse 
-edges in relation to discovered code change failures. To determine whether a code change 
-was a success or failure (introduce a software failure), we use the approach of
-Sliwerski et al.~\cite{Sliwerski:2005:CIF}. We then proceed in the following steps:
+To identify failure inducing developer pairs (edges) inside technical networks, 
+edges in relation to discovered code change failures were analysed. To determine whether a code change 
+was a success or failure (introduce a software failure), the approach of
+Sliwerski et al.~\cite{Sliwerski:2005:CIF} was used. The following steps were then taken:
 
 \begin{enumerate}
 \item Identify all possible edges from the technical networks.
@@ -145,17 +145,17 @@ Sliwerski et al.~\cite{Sliwerski:2005:CIF}. We then proceed in the following ste
 \item Determine if the edge is related to success or failure.
 \end{enumerate}
 
-To determine an edge's relation to success or failure, we create the value FI (failure
+To determine an edge's relation to success or failure,  the value FI (failure
 index) which represents the normalized chance of a code change failure in the presence
-of the edge. 
+of the edge, was created. 
 
 \begin{equation}
 \text{FI} = \frac{ \text{edge}_{failed} / \text{total}_{failed}}{\text{edge}_{failed} / \text{total}_{failed} + \text{edge}_{success} / \text{total}_{success}}
 \end{equation}
 
-Developer pairs with the highest FI value are said to be harmful structures
-inside a project. We store these edges in Table~\ref{tab:ratio}. We also perform
-a Fisher Exact Value test on edge appearance in successful and failed
+Developer pairs with the highest FI value are said to be failure inducing structures
+inside a project. These edges are stored in Table~\ref{tab:ratio}. A Fisher Exact Value test 
+was also preformed on edge appearance in successful and failed
 code changes, and non-appearance in successful and failed code changes to only
 consider statistically significant edges. 
 
@@ -195,9 +195,9 @@ Technical dependencies are often used to predict software failures
 in large software system~\cite{Pinzger:2008:DNP, Zimmermann:2008:PDU, Kim:2006:AIB}. 
 This paper has presented a method for detecting failure inducing pairs of developers inside
 of technical networks based on code changes. These developer pairs can be used in the prediction
-of future bugs as well as provide coordination reccomendations for developers within a project.
+of future bugs as well as provide coordination recommendations for developers within a project.
 
-In future work, the adding of communication networks on a per commit basis is planned. In this,
+In future work, the adding of communication networks on a per code change basis is planned. In this,
 the investigation of social and technical congruence on these networks and its effects on
 software quality will be studied.
 
